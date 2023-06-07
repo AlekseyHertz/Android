@@ -6,4 +6,5 @@
     <string name="description_post_menu">Меню поста</string>
     <string name="description_post_like">Нравится</string>
     <string name="description_post_share">Поделиться</string>
+    <string name="description_post_views">Просмотры</string>
 </resources>

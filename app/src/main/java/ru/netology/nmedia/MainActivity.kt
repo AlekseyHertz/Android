@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import ru.netology.nmedia.databinding.ActivityMainBinding
 import ru.netology.nmedia.dto.Post
-import ru.netology.nmedia.dto.countScore
-//import ru.netology.nmedia.dto.likesScore
-//import ru.netology.nmedia.dto.shareScore
+import ru.netology.nmedia.dto.convertCount
 
 
 class MainActivity : AppCompatActivity() {
@@ -32,30 +30,40 @@ class MainActivity : AppCompatActivity() {
             if (post.likedByMe) {
                 like?.setImageResource(R.drawable.ic_liked_24)
             }
-            likeCount?.text = post.likes.toString()
-            shareCount?.text = post.sharedCount.toString()
+            likeCount?.text = convertCount(post.likes)//post.likes.toString()
+            shareCount?.text = convertCount(post.sharedCount)//post.sharedCount.toString()
+            viewsCount?.text = convertCount(post.viewsCount)
 
             root.setOnClickListener {
                 Log.d("stuff", "stuff")
+                println("сработал root обработчик")
             }
 
             avatar.setOnClickListener {
                 Log.d("stuff", "avatar")
+                println("сработал avatar обработчик")
+            }
+
+            views?.setOnClickListener {
+                Log.d("stuff", "views")
+                println("сработал view обработчик")
             }
 
             share?.setOnClickListener {
                 Log.d("stuff", "share")
-                shareCount?.text = countScore(post.sharedCount++)
+                println("сработал share обработчик")
+                shareCount?.text = convertCount(post.sharedCount++)
             }
 
             like?.setOnClickListener {
                 Log.d("stuff", "like")
+                println("сработал like обработчик")
                 post.likedByMe = !post.likedByMe
                 like.setImageResource(
                     if (post.likedByMe) R.drawable.ic_liked_24 else R.drawable.ic_like_24
                 )
                 if (post.likedByMe) post.likes++ else post.likes--
-                likeCount?.text = countScore(post.likes)
+                likeCount?.text = convertCount(post.likes)
             }
         }
     }
