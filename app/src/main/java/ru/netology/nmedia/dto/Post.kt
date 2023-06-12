@@ -5,11 +5,12 @@ data class Post(
     val author: String,
     val content: String,
     val published: String,
-    var likes: Int = 1_000,
-    var likedByMe: Boolean = false,
-    var sharedCount: Int = 16_998,
-    var shareByMe: Boolean = false,
-    var viewsCount: Int = 123
+    val likes: Int = 999,
+    val likedByMe: Boolean = false,
+    val sharedCount: Int = 342,
+    val shareByMe: Boolean = false,
+    val viewsCount: Int = 123,
+    val viewByMe: Boolean = false
 )
 
 fun convertCount(element: Int) =
