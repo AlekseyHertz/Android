@@ -2,10 +2,27 @@ package ru.netology.nmedia.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import ru.netology.nmedia.adapter.PostAdapter
+import ru.netology.nmedia.adapter.PostViewHolder
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.dto.convertCount
 
 class PostRepositoryInMemoryImpl : PostRepository {
+
     private var posts = listOf(
+        Post(
+            id = 3,
+            author = "Нетология. Университет интернет-профессий будущего>",
+            content = "Нетология. Открываем двери в новые знания",
+            published = "18 октября в 12:12",
+            likedByMe = false,
+            shareByMe = false,
+            viewByMe = false,
+            likes = 999,
+            sharedCount = 342,
+            viewsCount = 123
+        ),
         Post(
             id = 2,
             author = "Нетология. Университет интернет-профессий будущего",
@@ -13,7 +30,10 @@ class PostRepositoryInMemoryImpl : PostRepository {
             published = "18 сентября в 18:12",
             likedByMe = false,
             shareByMe = false,
-            viewByMe = false
+            viewByMe = false,
+            likes = 123,
+            sharedCount = 456,
+            viewsCount = 789
         ),
         Post(
             id = 1,
@@ -22,7 +42,10 @@ class PostRepositoryInMemoryImpl : PostRepository {
             published = "21 мая в 18:36",
             likedByMe = false,
             shareByMe = false,
-            viewByMe = false
+            viewByMe = false,
+            likes = 12,
+            sharedCount = 96,
+            viewsCount = 543
         )
     )
 
@@ -31,27 +54,31 @@ class PostRepositoryInMemoryImpl : PostRepository {
     override fun getAll(): LiveData<List<Post>> = data
     override fun likeById(id: Long) {
         posts = posts.map {
-            if (it.id != id) it else it.copy(likedByMe = !it.likedByMe)
+            if (it.id != id) it else it.copy(
+                likedByMe = !it.likedByMe,
+                likes = if (it.likedByMe) it.likes - 1 else it.likes + 1
+            )
         }
-        //likedByMe = !post.likedByMe,
-        //likes = if (post.likedByMe) post.likes - 1 else post.likes + 1
+        println("likes worked")
         data.value = posts
     }
 
     override fun shareById(id: Long) {
         posts = posts.map {
-            if (it.id != id) it else it.copy(shareByMe = !it.shareByMe)
+            if (it.id != id) it else it.copy(
+                sharedCount = it.sharedCount + 1
+            )
         }
-        //    sharedCount = post.sharedCount + 1
-        // post = post.copy (shareByMe = true, shareCount = post.shareCount + 1)
         data.value = posts
     }
 
     override fun viewById(id: Long) {
         posts = posts.map {
-            if (it.id != id) it else it.copy(viewByMe = !it.viewByMe)
-            //viewsCount = post.viewsCount + 1
-        }  // post = post.copy (viewByMe = true, viewCount = post.viewCount + 1)
+            if (it.id != id) it else it.copy(
+                viewsCount = it.viewsCount + 1
+            )
+        }
+        println("view worked")
         data.value = posts
     }
 }

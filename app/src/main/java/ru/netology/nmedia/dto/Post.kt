@@ -5,11 +5,11 @@ data class Post(
     val author: String,
     val content: String,
     val published: String,
-    val likes: Int = 999,
+    val likes: Int,
     val likedByMe: Boolean = false,
-    val sharedCount: Int = 342,
+    val sharedCount: Int,
     val shareByMe: Boolean = false,
-    val viewsCount: Int = 123,
+    val viewsCount: Int,
     val viewByMe: Boolean = false
 )
 
@@ -20,3 +20,8 @@ fun convertCount(element: Int) =
         in 100_000..999_999 -> "${element / 1_000}K"
         else -> String.format("%.1fM", (element / 100_000 * 100_000).toDouble() / 1_000_000)
     }
+/*fun counter (element: Int) =
+    when (element) {
+        {clickOn} -> +1
+        else -> -1
+    }*/
