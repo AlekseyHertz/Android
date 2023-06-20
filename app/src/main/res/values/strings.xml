@@ -6,4 +6,6 @@
     <string name="description_post_like">Like</string>
     <string name="description_post_share">Share</string>
     <string name="description_post_views">Views</string>
+    <string name="post_text">Post Text</string>
+    <string name="like">Like</string>
 </resources>

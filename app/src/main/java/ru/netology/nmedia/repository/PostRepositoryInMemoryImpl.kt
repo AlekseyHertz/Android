@@ -9,7 +9,7 @@ import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.dto.convertCount
 
 class PostRepositoryInMemoryImpl : PostRepository {
-
+    private var nextId = 1L
     private var posts = listOf(
         Post(
             id = 3,
@@ -59,7 +59,6 @@ class PostRepositoryInMemoryImpl : PostRepository {
                 likes = if (it.likedByMe) it.likes - 1 else it.likes + 1
             )
         }
-        println("likes worked")
         data.value = posts
     }
 
@@ -78,7 +77,37 @@ class PostRepositoryInMemoryImpl : PostRepository {
                 viewsCount = it.viewsCount + 1
             )
         }
-        println("view worked")
         data.value = posts
+    }
+
+    override fun edit(post: Post) {
+        TODO("Not yet implemented")
+    }
+
+    override fun removeById(id: Long) {
+        posts = posts.filter { it.id != id }
+        data.value = posts
+    }
+
+    override fun save(post: Post) {
+        if (post.id == 0L) {
+            posts = listOf(
+                post.copy(
+                    id = nextId++,
+                    author = "Me",
+                    likedByMe = false,
+                    published = "now"
+                )
+            ) + posts
+        } else {
+            posts = posts.map {
+                if (it.id != post.id) it else it.copy(content = post.content)
+            }
+            data.value = posts
+        }
+    }
+
+    override fun abortText(content: String) {
+        TODO()
     }
 }
