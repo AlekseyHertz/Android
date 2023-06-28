@@ -32,7 +32,7 @@ class PostViewModel : ViewModel() {
 
     fun removeById(id: Long) = repository.removeById(id)
 
-    fun save(post: Post) {
+    fun save() {
         edited.value?.let {
             repository.save(it)
         }
@@ -49,9 +49,9 @@ class PostViewModel : ViewModel() {
         }
     }
 
-    fun abortText (content: String) {
+    fun abortText () {
         edited.value?.let {
+            edited.value = empty
         }
-        TODO()
     }
 }

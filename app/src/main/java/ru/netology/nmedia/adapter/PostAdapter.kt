@@ -21,30 +21,19 @@ interface OnInteractionListener {
     fun onEdit(post: Post) {}
     fun onRemove(post: Post) {}
     fun save(post: Post) {}
-    fun abortText(content: String) {}
+    fun abortText(post: Post) {}
 }
 
-/*typealias LikeCallBack = (Post) -> Unit
-typealias ShareCallBack = (Post) -> Unit
-typealias ViewCallBack = (Post) -> Unit
-typealias OnRemoveListener = (post: Post) -> Unit
-*/
-
 class PostAdapter(
-    //private val likeCallBack: LikeCallBack,
-    //private val shareCallBack: ShareCallBack,
-    //private val viewCallBack: ViewCallBack
-    //private val onInteractionListener: onInteractionListener,
     private val OnInteractionListener: OnInteractionListener,
 ) : ListAdapter<Post, PostViewHolder>(PostDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        //val view = CardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         val binding = CardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return PostViewHolder(
             binding,
             OnInteractionListener
-        )//view, likeCallBack, shareCallBack, viewCallBack)
+        )
     }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
@@ -55,9 +44,6 @@ class PostAdapter(
 
 class PostViewHolder(
     private val binding: CardPostBinding,
-    //private val likeCallBack: LikeCallBack,
-    //private val shareCallBack: ShareCallBack,
-    //private val viewCallBack: ViewCallBack,
     private val OnInteractionListener: OnInteractionListener,
 ) : RecyclerView.ViewHolder(binding.root) {
 

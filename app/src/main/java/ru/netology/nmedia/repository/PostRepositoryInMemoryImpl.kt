@@ -2,11 +2,7 @@ package ru.netology.nmedia.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import ru.netology.nmedia.adapter.PostAdapter
-import ru.netology.nmedia.adapter.PostViewHolder
 import ru.netology.nmedia.dto.Post
-import ru.netology.nmedia.dto.convertCount
 
 class PostRepositoryInMemoryImpl : PostRepository {
     private var nextId = 1L
@@ -80,7 +76,7 @@ class PostRepositoryInMemoryImpl : PostRepository {
         data.value = posts
     }
 
-    override fun edit(post: Post) {
+    override fun onEdit(post: Post) {
         TODO("Not yet implemented")
     }
 
@@ -90,7 +86,7 @@ class PostRepositoryInMemoryImpl : PostRepository {
     }
 
     override fun save(post: Post) {
-        if (post.id == 0L) {
+        //if (post.id == 0L) {
             posts = listOf(
                 post.copy(
                     id = nextId++,
@@ -99,15 +95,11 @@ class PostRepositoryInMemoryImpl : PostRepository {
                     published = "now"
                 )
             ) + posts
-        } else {
-            posts = posts.map {
-                if (it.id != post.id) it else it.copy(content = post.content)
-            }
             data.value = posts
+            return
         }
-    }
 
-    override fun abortText(content: String) {
+    override fun abortText(post: Post) {
         TODO()
     }
 }

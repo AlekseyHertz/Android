@@ -4,9 +4,11 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.transition.Visibility
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostAdapter
 import ru.netology.nmedia.databinding.ActivityMainBinding
@@ -43,12 +45,12 @@ class MainActivity : AppCompatActivity() {
             viewModel.viewById(post.id)
         }
 
-        override fun abortText(content: String) {
-            viewModel.abortText(content)
+        override fun abortText(post: Post) {
+            viewModel.abortText()
         }
 
         override fun save(post: Post) {
-            viewModel.save(post)
+            viewModel.save()
         }
     }
 
@@ -56,12 +58,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        /*val adapter = PostAdapter ({ viewModel.likeById(it.id) }, {viewModel.shareById(it.id)}, {viewModel.viewById(it.id)})
-*/
-
+        
         val adapter = PostAdapter(interaction)
-        binding.list?.adapter = adapter
+        binding.list.adapter = adapter
         viewModel.data.observe(this) { posts ->
             adapter.submitList(posts)
         }
@@ -76,7 +75,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        binding.save?.setOnClickListener {
+        binding.save.setOnClickListener {
             with(binding.content) {
                 if (text.isNullOrBlank()) {
                     Toast.makeText(
@@ -96,14 +95,18 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        binding.content.setOnClickListener {
-            if (text.isNullOrBlank()) {
-                R.id.abortText = View.GONE
-            } else R.id.abortText = View.VISIBLE
-            /*binding.list?.adapter = adapter
+        binding.abortText.setOnClickListener {
+            with(binding.content) {
+                if (text.isNullOrBlank()) {
+                   R.id.abortText = View.GONE
+                } else R.id.abortText = View.VISIBLE
+
+                viewModel.abortText()
+                /*binding.list?.adapter = adapter
             viewModel.data.observe(this)
             { posts ->
                 adapter.submitList(posts)*/
+            }
         }
     }
 }
