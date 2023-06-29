@@ -4,11 +4,10 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.transition.Visibility
+import androidx.core.view.isVisible
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostAdapter
 import ru.netology.nmedia.databinding.ActivityMainBinding
@@ -23,6 +22,13 @@ object AndroidUtils {
 }
 
 class MainActivity : AppCompatActivity() {
+
+    var View.isVisible: Boolean
+        get() = visibility == View.VISIBLE
+        set(value) {
+            visibility = if (value) View.VISIBLE else View.GONE
+        }
+
     val viewModel: PostViewModel by viewModels()
     val interaction: OnInteractionListener = object : OnInteractionListener {
         override fun onEdit(post: Post) {
@@ -58,7 +64,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        
+
         val adapter = PostAdapter(interaction)
         binding.list.adapter = adapter
         viewModel.data.observe(this) { posts ->
@@ -96,17 +102,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.abortText.setOnClickListener {
-            with(binding.content) {
-                if (text.isNullOrBlank()) {
-                   R.id.abortText = View.GONE
-                } else R.id.abortText = View.VISIBLE
-
-                viewModel.abortText()
-                /*binding.list?.adapter = adapter
-            viewModel.data.observe(this)
-            { posts ->
-                adapter.submitList(posts)*/
-            }
+            binding.content.setText("")
+            viewModel.abortText()
         }
+
+        /*binding.abortText.isVisible = true {
+            if (binding.content.text.isNullOrBlank()) {
+                View.GONE
+            }
+            else View.VISIBLE
+        }*/
     }
 }

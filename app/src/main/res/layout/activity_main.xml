@@ -50,7 +50,14 @@
         android:src="@drawable/ic_save_40" />
 
     <androidx.constraintlayout.widget.Group
-        android:id="@+id/group"
+        android:id="@+id/groupInvisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="abortText" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/groupVisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="visible"
@@ -65,7 +72,6 @@
         app:layout_constraintEnd_toEndOf="@id/save"
         app:layout_constraintStart_toEndOf="@id/content"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:src="@drawable/ic_close_24"
-        android:visibility="gone"/>
+        android:src="@drawable/ic_close_24"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
