@@ -84,12 +84,6 @@ class PostViewHolder(
                         when (item.itemId) {
                             R.id.remove -> {
                                 OnInteractionListener.onRemove(post)
-                                //onRemoveListener(post)
-                                true
-                            }
-
-                            R.id.save -> {
-                                OnInteractionListener.save(post)
                                 true
                             }
 

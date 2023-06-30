@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostAdapter
 import ru.netology.nmedia.databinding.ActivityMainBinding
@@ -106,11 +107,8 @@ class MainActivity : AppCompatActivity() {
             viewModel.abortText()
         }
 
-        /*binding.abortText.isVisible = true {
-            if (binding.content.text.isNullOrBlank()) {
-                View.GONE
-            }
-            else View.VISIBLE
-        }*/
+        binding.content.doOnTextChanged { _, _, _, count ->
+            binding.abortText.isVisible = count != 0
+        }
     }
 }
