@@ -4,11 +4,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import org.w3c.dom.Text
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.Post
@@ -52,12 +52,16 @@ class PostViewHolder(
             author.text = post.author
             published.text = post.published
             content.text = post.content
-            likeCount.text = convertCount(post.likes)
-            shareCount.text = convertCount(post.sharedCount)
+
+            like.text = convertCount(post.likes)
+            share.text = convertCount(post.sharedCount)
+            //likeCount.text = convertCount(post.likes)
+            //shareCount.text = convertCount(post.sharedCount)
             viewsCount.text = convertCount(post.viewsCount)
-            like.setImageResource(
+            like.isChecked = post.likedByMe
+            /*like.setImageResource(
                 if (post.likedByMe) R.drawable.ic_liked_24 else R.drawable.ic_like_24
-            )
+            )*/
 
             like.setOnClickListener {
                 Log.d("stuff", "like") // оставим для logcat
@@ -65,6 +69,7 @@ class PostViewHolder(
                 //likeCallBack(post)
             }
 
+            share.isChecked = post.shareByMe
             share.setOnClickListener {
                 Log.d("stuff", "share") // оставим для logcat
                 OnInteractionListener.onShare(post)
@@ -76,6 +81,7 @@ class PostViewHolder(
                 OnInteractionListener.onView(post)
                 //viewCallBack(post)
             }
+
 
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {

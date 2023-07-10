@@ -20,8 +20,3 @@ fun convertCount(element: Int) =
         in 100_000..999_999 -> "${element / 1_000}K"
         else -> String.format("%.1fM", (element / 100_000 * 100_000).toDouble() / 1_000_000)
     }
-/*fun counter (element: Int) =
-    when (element) {
-        {clickOn} -> +1
-        else -> -1
-    }*/
