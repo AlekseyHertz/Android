@@ -11,5 +11,6 @@
     <color name="red">#ff0000</color>
     <color name="shrine_pink_100">#D339CB</color>
     <color name="shrine_pink_900">#8500A3</color>
+    <color name="menu_grey">#838083</color>
 
 </resources>

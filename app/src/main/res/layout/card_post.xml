@@ -46,46 +46,20 @@
         app:layout_constraintTop_toBottomOf="@id/author"
         tools:text="@sample/posts.json/data/published" />
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/menu"
         android:layout_marginBottom="@dimen/common_spacing"
         android:background="@android:color/transparent"
         android:contentDescription="@string/description_post_menu"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:floatingAction ="show"
-        android:visibility="visible"
-        app:srcCompat="@drawable/ic_more_vert_24">
+        app:icon="@drawable/ic_more_vert_24"
+        style="@style/Widget.AppTheme.LikeButton."
+        tools:checked="@sample/posts.json/data/likeByMe">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/button1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:layout_margin="16dp"
-            android:text="Button 1"
-            android:clickable="true"
-            app:fabSize="mini"
-            tools:floatingAction ="fab.show"
-            style="?attr/materialButtonOutlinedStyle"
-            android:contentDescription="button1" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/button2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:layout_margin="16dp"
-            android:text="Button 2"
-            android:clickable="true"
-            app:fabSize="mini"
-            tools:floatingAction ="fab.show"
-            style="?attr/materialButtonOutlinedStyle"
-            android:contentDescription="TODO" />
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </com.google.android.material.button.MaterialButton>
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/header"
