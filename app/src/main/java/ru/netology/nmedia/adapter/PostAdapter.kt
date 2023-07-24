@@ -1,14 +1,15 @@
 package ru.netology.nmedia.adapter
 
+import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.Post
@@ -22,6 +23,8 @@ interface OnInteractionListener {
     fun onRemove(post: Post) {}
     fun save(post: Post) {}
     fun abortText(post: Post) {}
+
+    fun playVideo(post: Post) {}
 }
 
 class PostAdapter(
@@ -102,6 +105,21 @@ class PostViewHolder(
                         }
                     }
                 }.show()
+            }
+
+            if (post.videoUrl != null) {
+                videoLayout.visibility = View.VISIBLE
+
+                videoView.apply {
+                    setVideoURI(Uri.parse(post.videoUrl))
+                    requestFocus()
+                    start()
+                }
+            } else {
+                videoLayout.visibility = View.GONE
+            }
+            videoLayout.setOnClickListener {
+                OnInteractionListener.playVideo(post)
             }
         }
     }

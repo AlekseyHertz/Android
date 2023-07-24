@@ -12,4 +12,6 @@ interface PostRepository {
     fun removeById (id: Long)
     fun save (post: Post)
     fun abortText (post: Post)
+
+    fun playVideo (post: Post) {}
 }

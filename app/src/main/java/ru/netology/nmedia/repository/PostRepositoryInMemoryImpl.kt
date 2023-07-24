@@ -16,7 +16,8 @@ class PostRepositoryInMemoryImpl : PostRepository {
             viewByMe = false,
             likes = 999,
             sharedCount = 342,
-            viewsCount = 123
+            viewsCount = 123,
+            videoUrl = "https://youtu.be/KafyX_KYjYg"
         ),
         Post(
             id = 2,
@@ -28,7 +29,8 @@ class PostRepositoryInMemoryImpl : PostRepository {
             viewByMe = false,
             likes = 123,
             sharedCount = 456,
-            viewsCount = 789
+            viewsCount = 789,
+            videoUrl = ""
         ),
         Post(
             id = 1,
@@ -40,7 +42,8 @@ class PostRepositoryInMemoryImpl : PostRepository {
             viewByMe = false,
             likes = 12,
             sharedCount = 96,
-            viewsCount = 543
+            viewsCount = 543,
+            videoUrl = "https://youtu.be/KafyX_KYjYg"
         )
     )
 
@@ -107,6 +110,10 @@ class PostRepositoryInMemoryImpl : PostRepository {
     }
 
     override fun abortText(post: Post) {
+        TODO()
+    }
+
+    override fun playVideo(post: Post) {
         TODO()
     }
 }

@@ -16,7 +16,8 @@ private val empty = Post(
     sharedCount = 0,
     shareByMe = false,
     viewsCount = 0,
-    viewByMe = false
+    viewByMe = false,
+    videoUrl = ""
 )
 
 class PostViewModel : ViewModel() {

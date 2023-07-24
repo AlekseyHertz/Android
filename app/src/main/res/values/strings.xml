@@ -8,4 +8,7 @@
     <string name="description_post_views">Views</string>
     <string name="post_text">Post Text</string>
     <string name="like">Like</string>
+    <string name="chooser_share_post">Choose</string>
+    <string name="error_empty_content">Error</string>
+    <string name="add_post">Add</string>
 </resources>

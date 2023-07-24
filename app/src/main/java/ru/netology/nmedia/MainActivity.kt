@@ -1,19 +1,19 @@
 package ru.netology.nmedia
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
-import androidx.core.widget.doOnTextChanged
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostAdapter
 import ru.netology.nmedia.databinding.ActivityMainBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.viewmodel.PostViewModel
+
 
 object AndroidUtils {
     fun hideKeyboard(view: View) {
@@ -31,9 +31,22 @@ class MainActivity : AppCompatActivity() {
         }
 
     val viewModel: PostViewModel by viewModels()
+
+    val newPostLauncher = registerForActivityResult(NewPostContract) { text ->
+        text?: return@registerForActivityResult
+        viewModel.changeContent(text.toString())
+        viewModel.save()
+    }
+
     val interaction: OnInteractionListener = object : OnInteractionListener {
         override fun onEdit(post: Post) {
             viewModel.edit(post)
+            newPostLauncher.launch(post.content)
+        }
+
+        override fun playVideo (post: Post) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.videoUrl))
+                startActivity(intent)
         }
 
         override fun onLike(post: Post) {
@@ -45,7 +58,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onShare(post: Post) {
-            viewModel.shareById(post.id)
+            //viewModel.shareById(post.id)
+            val intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, post.content)
+            }
+
+            val chooser = Intent.createChooser(intent, getString(R.string.chooser_share_post))
+            startActivity(chooser)
         }
 
         override fun onView(post: Post) {
@@ -72,7 +93,11 @@ class MainActivity : AppCompatActivity() {
             adapter.submitList(posts)
         }
 
-        viewModel.edited.observe(this) { post ->
+        binding.add.setOnClickListener {
+            newPostLauncher.launch(null)
+        }
+
+        /*viewModel.edited.observe(this) { post ->
             if (post.id == 0L) {
                 return@observe
             }
@@ -109,6 +134,6 @@ class MainActivity : AppCompatActivity() {
 
         binding.content.doOnTextChanged { _, _, _, count ->
             binding.abortText.isVisible = count != 0
-        }
+        }*/
     }
 }
