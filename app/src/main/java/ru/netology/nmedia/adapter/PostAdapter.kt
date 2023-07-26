@@ -1,12 +1,10 @@
 package ru.netology.nmedia.adapter
 
-import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -95,30 +93,22 @@ class PostViewHolder(
                                 OnInteractionListener.onRemove(post)
                                 true
                             }
-
                             R.id.edit -> {
                                 OnInteractionListener.onEdit(post)
                                 true
                             }
-
                             else -> false
                         }
                     }
                 }.show()
             }
 
-            if (post.videoUrl != null) {
+            if (post.videoUrl.isNotBlank()) {
                 videoLayout.visibility = View.VISIBLE
-
-                videoView.apply {
-                    setVideoURI(Uri.parse(post.videoUrl))
-                    requestFocus()
-                    start()
-                }
             } else {
                 videoLayout.visibility = View.GONE
             }
-            videoLayout.setOnClickListener {
+            playButton.setOnClickListener {
                 OnInteractionListener.playVideo(post)
             }
         }

@@ -92,6 +92,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/content">
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/playButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:checkable="true"
+            android:contentDescription="@string/description_post_playButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:gravity="center_horizontal|center_vertical"
+            app:icon="@drawable/ic_play_button_24"
+            android:background="@android:color/transparent"/>
+
         <VideoView
             android:id="@+id/videoView"
             android:layout_width="match_parent"
@@ -100,11 +112,12 @@
 
         <ImageView
             android:id="@+id/videoImage"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:foregroundGravity="center"
             android:src="@mipmap/ic_video_play_round"
             android:contentDescription="TODO" />
+
     </FrameLayout>
 
     <androidx.constraintlayout.widget.Barrier

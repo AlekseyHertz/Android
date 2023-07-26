@@ -1,13 +1,8 @@
 package ru.netology.nmedia
 
-import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.activity.result.contract.ActivityResultContract
-import com.google.android.material.snackbar.Snackbar
-import ru.netology.nmedia.databinding.ActivityIntentHandlerBinding
+import androidx.appcompat.app.AppCompatActivity
 import ru.netology.nmedia.databinding.ActivityVideoBinding
 
 class VideoActivity : AppCompatActivity() {
@@ -19,7 +14,6 @@ class VideoActivity : AppCompatActivity() {
 
         binding.videoPic.setOnClickListener {
             Intent.ACTION_VIEW
-
         }
         intent?.let {
             if (it.action != Intent.ACTION_VIEW) {

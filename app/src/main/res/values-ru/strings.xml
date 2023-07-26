@@ -5,6 +5,7 @@
     <string name="description_post_author_avatar">Аватар автора поста</string>
     <string name="description_post_menu">Меню поста</string>
     <string name="description_post_like">Нравится</string>
+    <string name="description_post_playButton">Проиграть</string>
     <string name="description_post_share">Поделиться</string>
     <string name="description_post_views">Просмотры</string>
     <string name="post_text">Текст поста</string>

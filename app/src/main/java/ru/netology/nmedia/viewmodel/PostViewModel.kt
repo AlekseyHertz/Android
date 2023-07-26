@@ -20,7 +20,7 @@ private val empty = Post(
     videoUrl = ""
 )
 
-class PostViewModel : ViewModel() {
+class PostViewModel() : ViewModel () {
     private val repository: PostRepository = PostRepositoryInMemoryImpl()
     val data = repository.getAll()
     val edited = MutableLiveData(empty)

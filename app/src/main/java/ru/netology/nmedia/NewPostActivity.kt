@@ -1,11 +1,11 @@
 package ru.netology.nmedia
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.appcompat.app.AppCompatActivity
 import ru.netology.nmedia.databinding.ActivityNewPostBinding
 
 class NewPostActivity : AppCompatActivity() {
@@ -16,21 +16,34 @@ class NewPostActivity : AppCompatActivity() {
 
         intent?.getStringExtra(String())
 
+        val activity = this
+        activity.onBackPressedDispatcher.addCallback(
+            activity, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    setResult(AppCompatActivity.RESULT_CANCELED, intent)
+                    finish()
+                }
+            }
+        )
+
         binding.ok.setOnClickListener {
-            val text = binding.content.text.toString()
+            val text = binding.content.text.toString() //
             if (text.isBlank()) {
                 setResult(RESULT_CANCELED)
             } else {
                 setResult(RESULT_OK, Intent(). apply { putExtra(Intent.EXTRA_TEXT,text) })
             }
-            finish()
+            finish() //
         }
     }
 }
 
-object NewPostContract: ActivityResultContract<String?, String?>() {
-    override fun createIntent(context: Context, input: String?) = Intent (context, NewPostActivity::class.java).putExtra(Intent.EXTRA_TEXT, input)
 
-    override fun parseResult(resultCode: Int, intent: Intent?) = intent?.getStringExtra(Intent.EXTRA_TEXT)
+object NewPostContract : ActivityResultContract<String?, String?>() {
+    override fun createIntent(context: Context, input: String?) =
+        Intent(context, NewPostActivity::class.java).putExtra(Intent.EXTRA_TEXT, input)
+
+    override fun parseResult(resultCode: Int, intent: Intent?) =
+        intent?.getStringExtra(Intent.EXTRA_TEXT)
 
 }
