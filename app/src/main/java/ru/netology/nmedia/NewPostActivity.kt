@@ -14,7 +14,8 @@ class NewPostActivity : AppCompatActivity() {
         val binding = ActivityNewPostBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        intent?.getStringExtra(String())
+        val content = intent?.getStringExtra(Intent.EXTRA_TEXT)?:""
+        binding.content.setText(content)
 
         val activity = this
         activity.onBackPressedDispatcher.addCallback(
