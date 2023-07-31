@@ -1,19 +1,6 @@
 package ru.netology.nmedia
 
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.os.Bundle
-import android.view.View
-import android.view.inputmethod.InputMethodManager
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import ru.netology.nmedia.adapter.OnInteractionListener
-import ru.netology.nmedia.adapter.PostAdapter
-import ru.netology.nmedia.databinding.ActivityMainBinding
-import ru.netology.nmedia.dto.Post
-import ru.netology.nmedia.viewmodel.PostViewModel
-
+/*
 
 object AndroidUtils {
     fun hideKeyboard(view: View) {
@@ -136,4 +123,4 @@ class MainActivity : AppCompatActivity() {
             binding.abortText.isVisible = count != 0
         }*/
     }
-}
+}*/

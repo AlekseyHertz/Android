@@ -19,16 +19,6 @@ class VideoActivity : AppCompatActivity() {
             if (it.action != Intent.ACTION_VIEW) {
                 return@let
             }
-
-
-            /*fun playMedia(file: Uri) {
-                val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = file
-                }
-                if (intent.resolveActivity(packageManager) != null) {
-                    startActivity(intent)
-                }
-            }*/
         }
     }
 }
