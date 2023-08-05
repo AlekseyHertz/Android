@@ -13,7 +13,7 @@
 
         <action
             android:id="@+id/action_feedFragment_to_postFragment"
-            app:destination="@id/fragment_post"
+            app:destination="@id/postfragment"
             app:enterAnim="@android:anim/fade_in"
             app:exitAnim="@android:anim/fade_out"
             app:popEnterAnim="@android:anim/fade_in"
@@ -26,12 +26,34 @@
             app:exitAnim="@android:anim/fade_out"
             app:popEnterAnim="@android:anim/fade_in"
             app:popExitAnim="@android:anim/fade_out" />
+        <action
+            android:id="@+id/action_feedFragment_to_postfragmentedit"
+            app:destination="@id/postfragmentedit"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"/>
     </fragment>
     <fragment
-        android:id="@+id/fragment_post"
+        android:id="@+id/postfragment"
         android:name="ru.netology.nmedia.PostFragment"
-        android:label="fragment_post"
-        tools:layout="@layout/fragment_post"/>
+        android:label="postfragment"
+        tools:layout="@layout/fragment_post" >
+
+        <action
+            android:id="@+id/action_postfragment_to_newPostFragmentEdit"
+            app:destination="@id/postfragmentedit"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"/>
+    </fragment>
+    <fragment
+        android:id="@+id/postfragmentedit"
+        android:name="ru.netology.nmedia.PostFragment"
+        android:label="postfragmentedit"
+        tools:layout="@layout/fragment_post" />
+
     <fragment
         android:id="@+id/newPostFragment"
         android:name="ru.netology.nmedia.viewmodel.NewPostFragment"

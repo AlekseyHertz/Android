@@ -1,51 +1,92 @@
 package ru.netology.nmedia.viewmodel // из NewPostActivity
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.contract.ActivityResultContract
-import androidx.appcompat.app.AppCompatActivity
-import ru.netology.nmedia.NewPostActivity
-import ru.netology.nmedia.databinding.ActivityNewPostBinding
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import ru.netology.nmedia.databinding.FragmentNewPostBinding
+import ru.netology.nmedia.repository.Helper
 
-class NewPostFragment : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val binding = ActivityNewPostBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+class NewPostFragment : Fragment() {
 
-        val content = intent?.getStringExtra(Intent.EXTRA_TEXT)?:""
-        binding.content.setText(content)
+    companion object {
+        var Bundle.textArg: String? by Helper.StringArg
+    }
 
-        val activity = this
-        activity.onBackPressedDispatcher.addCallback(
-            activity, object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    setResult(AppCompatActivity.RESULT_CANCELED, intent)
-                    finish()
-                }
-            }
+    private val viewModel: PostViewModel by viewModels(
+        ownerProducer = ::requireParentFragment
+    )
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        saveInstantState: Bundle?
+    ): View {
+        val binding = FragmentNewPostBinding.inflate(
+            inflater,
+            container,
+            false
         )
 
+        arguments?.textArg
+            ?.let(binding.edit::setText)
+
         binding.ok.setOnClickListener {
-            val text = binding.content.text.toString() //
-            if (text.isBlank()) {
-                setResult(RESULT_CANCELED)
-            } else {
-                setResult(RESULT_OK, Intent(). apply { putExtra(Intent.EXTRA_TEXT,text) })
-            }
-            finish() //
+            viewModel.changeContent(binding.edit.text.toString())
+            viewModel.save()
+            Helper.AndroidUtils.hideKeyboard(requireView())
+        findNavController().navigateUp()
         }
+
+        viewModel.edited.observe(viewLifecycleOwner) {
+            post ->
+            binding.edit.setText(post.content)
+            Log.d("newPostFragment", "edit")
+        }
+
+        return binding.root
     }
 }
+/*override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    val binding = ActivityNewPostBinding.inflate(layoutInflater)
+    setContentView(binding.root)
 
+    val content = intent?.getStringExtra(Intent.EXTRA_TEXT)?:""
+    binding.content.setText(content)
 
-object NewPostContract : ActivityResultContract<String?, String?>() {
-    override fun createIntent(context: Context, input: String?) =
-        Intent(context, NewPostActivity::class.java).putExtra(Intent.EXTRA_TEXT, input)
+    val activity = this
+    activity.onBackPressedDispatcher.addCallback(
+        activity, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                setResult(AppCompatActivity.RESULT_CANCELED, intent)
+                finish()
+            }
+        }
+    )
 
-    override fun parseResult(resultCode: Int, intent: Intent?) =
-        intent?.getStringExtra(Intent.EXTRA_TEXT)
-
+    binding.ok.setOnClickListener {
+        val text = binding.content.text.toString() //
+        if (text.isBlank()) {
+            setResult(RESULT_CANCELED)
+        } else {
+            setResult(RESULT_OK, Intent(). apply { putExtra(Intent.EXTRA_TEXT,text) })
+        }
+        finish() //
+    }
 }
+}
+
+
+/*object NewPostContract : ActivityResultContract<String?, String?>() {
+override fun createIntent(context: Context, input: String?) =
+    Intent(context, NewPostActivity::class.java).putExtra(Intent.EXTRA_TEXT, input)
+
+override fun parseResult(resultCode: Int, intent: Intent?) =
+    intent?.getStringExtra(Intent.EXTRA_TEXT)
+
+}*/

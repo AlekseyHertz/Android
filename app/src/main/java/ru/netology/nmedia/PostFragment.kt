@@ -1,56 +1,109 @@
-package ru.netology.nmedia // из PostAdapter
+package ru.netology.nmedia //
 // класс в разработке
 
-/*
+
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.PopupMenu
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
-import androidx.recyclerview.widget.RecyclerView
-import ru.netology.nmedia.databinding.FragmentFeedBinding
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import ru.netology.nmedia.adapter.OnInteractionListener
+import ru.netology.nmedia.adapter.PostViewHolder
 import ru.netology.nmedia.databinding.FragmentPostBinding
 import ru.netology.nmedia.dto.Post
-import ru.netology.nmedia.dto.convertCount
+import ru.netology.nmedia.repository.Helper
+import ru.netology.nmedia.viewmodel.PostViewModel
 
-interface OnInteractionListener {
-    fun onLike(post: Post) {}
-    fun onShare(post: Post) {}
-    fun onView(post: Post) {}
-    fun onEdit(post: Post) {}
-    fun onRemove(post: Post) {}
-    fun save(post: Post) {}
-    fun abortText(post: Post) {}
-    fun playVideo(post: Post) {}
-}
 
-class PostFragment(param: OnInteractionListener) : Fragment () {
-//    private val OnInteractionListener: OnInteractionListener,
-//) : ListAdapter<Post, PostViewHolder>(PostDiffCallback()) {
+class PostFragment() : Fragment() {
+
+    companion object {
+        var Bundle.postId by Helper.LongArg
+    }
+
+    private val viewModel: PostViewModel by viewModels(
+        ownerProducer = ::requireParentFragment
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentFeedBinding.inflate(
+        val binding = FragmentPostBinding.inflate(
             inflater,
             container,
-        false
+            false
         )
+
+        val postViewHolder = PostViewHolder(binding.post, object : OnInteractionListener {
+            override fun onEdit(post: Post) {
+                viewModel.edited.observe(viewLifecycleOwner) { post ->//toString()
+                    //newPostLauncher.launch(post.content)
+                    binding.edit.setText(post.content)
+                    findNavController().navigate(
+                        R.id.action_postfragment_to_newPostFragmentEdit,
+                        bundleOf("content" to post.content)
+                    )
+                    Log.d("PostFragment", "edit")
+                }
+            }
+
+
+            override fun playVideo(post: Post) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.videoUrl))
+                startActivity(intent)
+            }
+
+            override fun onLike(post: Post) {
+                viewModel.likeById(post.id)
+            }
+
+            override fun onView(post: Post) {
+                viewModel.viewById(post.id)
+            }
+
+            override fun onRemove(post: Post) {
+                viewModel.removeById(post.id)
+            }
+
+            override fun onShare(post: Post) {
+                //viewModel.shareById(post.id)
+                val intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, post.content)
+                }
+
+                /*val shareIntent =
+                    Intent.createChooser(intent.getString(R.string.chooser_share_post))
+                startActivity(shareIntent)
+*/
+                val chooser = Intent.createChooser(intent, getString(R.string.chooser_share_post))
+                startActivity(chooser)
+            }
+        })
+
+
+        viewModel.data.observe(viewLifecycleOwner) { posts ->
+            val post = posts.find { it.id == requireArguments().postId } ?: run {
+                findNavController().navigateUp()
+                return@observe
+            }
+            postViewHolder.bind(post)
+        }
+
         return binding.root
     }
-
-    /*override fun onBindViewHolder(holder: PostFragmentHolder, position: Int) {
-        val post = getItem(position)
-        holder.bind(post)
-    }*/
 }
 
-class PostFragmentHolder(
+/*class PostFragmentHolder(
     private val binding: FragmentPostBinding,
     private val OnInteractionListener: OnInteractionListener,
 ) : RecyclerView.ViewHolder(binding.root) {
@@ -121,7 +174,7 @@ class PostFragmentHolder(
             }
         }
     }
-}
+}*/
 
 /*class PostDiffCallback : DiffUtil.ItemCallback<Post>() {
 
@@ -132,4 +185,4 @@ class PostFragmentHolder(
     override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean {
         return oldItem == newItem
     }
-}*/*/
+}*/

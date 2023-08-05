@@ -23,17 +23,18 @@ interface OnInteractionListener {
     fun abortText(post: Post) {}
 
     fun playVideo(post: Post) {}
+    fun onPost(post: Post) {}
 }
 
 class PostAdapter(
-    private val OnInteractionListener: OnInteractionListener,
+    private val onInteractionListener: OnInteractionListener,
 ) : ListAdapter<Post, PostViewHolder>(PostDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val binding = CardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return PostViewHolder(
             binding,
-            OnInteractionListener
+            onInteractionListener
         )
     }
 
@@ -45,7 +46,7 @@ class PostAdapter(
 
 class PostViewHolder(
     private val binding: CardPostBinding,
-    private val OnInteractionListener: OnInteractionListener,
+    private val onInteractionListener: OnInteractionListener,
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(post: Post) {
@@ -53,7 +54,10 @@ class PostViewHolder(
             author.text = post.author
             published.text = post.published
             content.text = post.content
-
+            content.setOnClickListener {
+                Log.d("stuff", "content")
+                onInteractionListener.onPost(post)
+            }
             like.text = convertCount(post.likes)
             share.text = convertCount(post.sharedCount)
             //likeCount.text = convertCount(post.likes)
@@ -66,20 +70,20 @@ class PostViewHolder(
 
             like.setOnClickListener {
                 Log.d("stuff", "like") // оставим для logcat
-                OnInteractionListener.onLike(post)
+                onInteractionListener.onLike(post)
                 //likeCallBack(post)
             }
 
             share.isChecked = post.shareByMe
             share.setOnClickListener {
                 Log.d("stuff", "share") // оставим для logcat
-                OnInteractionListener.onShare(post)
+                onInteractionListener.onShare(post)
                 //shareCallBack(post)
             }
 
             views.setOnClickListener {
                 Log.d("stuff", "view") // оставим для logcat
-                OnInteractionListener.onView(post)
+                onInteractionListener.onView(post)
                 //viewCallBack(post)
             }
 
@@ -90,11 +94,11 @@ class PostViewHolder(
                     setOnMenuItemClickListener { item ->
                         when (item.itemId) {
                             R.id.remove -> {
-                                OnInteractionListener.onRemove(post)
+                                onInteractionListener.onRemove(post)
                                 true
                             }
                             R.id.edit -> {
-                                OnInteractionListener.onEdit(post)
+                                onInteractionListener.onEdit(post)
                                 true
                             }
                             else -> false
@@ -109,7 +113,12 @@ class PostViewHolder(
                 videoLayout.visibility = View.GONE
             }
             playButton.setOnClickListener {
-                OnInteractionListener.playVideo(post)
+                onInteractionListener.playVideo(post)
+            }
+
+            root.setOnClickListener {
+                onInteractionListener.onPost(post)
+                Log.d("post", "post")
             }
         }
     }
