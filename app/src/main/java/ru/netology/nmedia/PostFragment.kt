@@ -1,6 +1,4 @@
 package ru.netology.nmedia //
-// класс в разработке
-
 
 import android.content.Intent
 import android.net.Uri
@@ -19,7 +17,6 @@ import ru.netology.nmedia.databinding.FragmentPostBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.Helper
 import ru.netology.nmedia.viewmodel.PostViewModel
-
 
 class PostFragment() : Fragment() {
 
@@ -44,15 +41,12 @@ class PostFragment() : Fragment() {
 
         val postViewHolder = PostViewHolder(binding.post, object : OnInteractionListener {
             override fun onEdit(post: Post) {
-                viewModel.edited.observe(viewLifecycleOwner) { post ->//toString()
-                    //newPostLauncher.launch(post.content)
-                    binding.edit.setText(post.content)
-                    findNavController().navigate(
-                        R.id.action_postfragment_to_newPostFragmentEdit,
-                        bundleOf("content" to post.content)
-                    )
-                    Log.d("PostFragment", "edit")
-                }
+                viewModel.edit(post)
+                findNavController().navigate(
+                    R.id.action_postfragment_to_newPostFragment,
+                    bundleOf("content" to post.content)
+                )
+                Log.d("PostFragment", "edit")
             }
 
 
@@ -102,87 +96,3 @@ class PostFragment() : Fragment() {
         return binding.root
     }
 }
-
-/*class PostFragmentHolder(
-    private val binding: FragmentPostBinding,
-    private val OnInteractionListener: OnInteractionListener,
-) : RecyclerView.ViewHolder(binding.root) {
-
-    fun bind(post: Post) {
-        binding.apply {
-
-            author.text = post.author
-            published.text = post.published
-            content.text = post.content
-            content.findNavController().navigate(R.id.action_feedFragment_to_postFragment)
-            like.text = convertCount(post.likes)
-            share.text = convertCount(post.sharedCount)
-            //likeCount.text = convertCount(post.likes)
-            //shareCount.text = convertCount(post.sharedCount)
-            viewsCount.text = convertCount(post.viewsCount)
-            like.isChecked = post.likedByMe
-            /*like.setImageResource(
-                if (post.likedByMe) R.drawable.ic_liked_24 else R.drawable.ic_like_24
-            )*/
-
-            like.setOnClickListener {
-                Log.d("stuff", "like") // оставим для logcat
-                OnInteractionListener.onLike(post)
-                //likeCallBack(post)
-            }
-
-            share.isChecked = post.shareByMe
-            share.setOnClickListener {
-                Log.d("stuff", "share") // оставим для logcat
-                OnInteractionListener.onShare(post)
-                //shareCallBack(post)
-            }
-
-            views.setOnClickListener {
-                Log.d("stuff", "view") // оставим для logcat
-                OnInteractionListener.onView(post)
-                //viewCallBack(post)
-            }
-
-
-            menu.setOnClickListener {
-                PopupMenu(it.context, it).apply {
-                    inflate(R.menu.options_post)
-                    setOnMenuItemClickListener { item ->
-                        when (item.itemId) {
-                            R.id.remove -> {
-                                OnInteractionListener.onRemove(post)
-                                true
-                            }
-                            R.id.edit -> {
-                                OnInteractionListener.onEdit(post)
-                                true
-                            }
-                            else -> false
-                        }
-                    }
-                }.show()
-            }
-
-            if (post.videoUrl.isNotBlank()) {
-                videoLayout.visibility = View.VISIBLE
-            } else {
-                videoLayout.visibility = View.GONE
-            }
-            playButton.setOnClickListener {
-                OnInteractionListener.playVideo(post)
-            }
-        }
-    }
-}*/
-
-/*class PostDiffCallback : DiffUtil.ItemCallback<Post>() {
-
-    override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
-        return oldItem.id == newItem.id
-    }
-
-    override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean {
-        return oldItem == newItem
-    }
-}*/
