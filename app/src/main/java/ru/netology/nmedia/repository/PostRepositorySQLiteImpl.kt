@@ -1,39 +1,28 @@
-package ru.netology.nmedia.repository
-/*
-import android.content.Context
+package ru.netology.nmedia.repository // из PostRepositoryFileImpl
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dto.Post
 
-class PostRepositoryFileImpl(private val context: Context) : PostRepository {
+class PostRepositorySQLiteImpl(private val dao : PostDao) : PostRepository {
 
-    private val gson = Gson()//.newBuilder().setPrettyPrinting().create()
-    private val filename = "posts.json"
-    private val typeToken = TypeToken.getParameterized(List::class.java, Post::class.java).type
+//    private val gson = Gson()//.newBuilder().setPrettyPrinting().create()
+//    private val filename = "posts.json"
+//    private val typeToken = TypeToken.getParameterized(List::class.java, Post::class.java).type
     private var posts = emptyList<Post>()
-        set(value) {
-            field = value
-            sync()
-        }
     private var nextId = (posts.maxByOrNull { it.id }?.id ?: 0L) + 1
     private val data = MutableLiveData(posts)
 
     init {
-        val file = context.filesDir.resolve(filename)
-        if (file.exists()) {
-            context.openFileInput(filename).bufferedReader().use {
-                posts = gson.fromJson(it, typeToken)
-                nextId = (posts.maxOfOrNull { it.id } ?: 0) + 1
-                data.value = posts
-            }
-        }
+        posts = dao.getAll()
+        data.value = posts
     }
 
     override fun getAll(): LiveData<List<Post>> = data
     override fun likeById(id: Long) {
-        posts = posts.map {
+        dao.likeById(id)
+        posts.map {
             if (it.id != id) it else it.copy(
                 likedByMe = !it.likedByMe,
                 likes = if (it.likedByMe) it.likes - 1 else it.likes + 1
@@ -43,6 +32,7 @@ class PostRepositoryFileImpl(private val context: Context) : PostRepository {
     }
 
     override fun shareById(id: Long) {
+
         posts = posts.map {
             if (it.id != id) it else it.copy(
                 shareByMe = !it.shareByMe,
@@ -66,6 +56,7 @@ class PostRepositoryFileImpl(private val context: Context) : PostRepository {
     }
 
     override fun removeById(id: Long) {
+        dao.removeById(id)
         posts = posts.filter { it.id != id }
         data.value = posts
     }
@@ -97,12 +88,4 @@ class PostRepositoryFileImpl(private val context: Context) : PostRepository {
     override fun playVideo(post: Post) {
         TODO()
     }
-
-    private fun sync() {
-        context.openFileOutput(filename, Context.MODE_PRIVATE).bufferedWriter().use {
-            it.write(gson.toJson(posts))
-        }
-    }
 }
-
- */

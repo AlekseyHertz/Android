@@ -8,7 +8,7 @@ import ru.netology.nmedia.databinding.ActivityAppBinding
 
 class AppActivity : AppCompatActivity(R.layout.activity_app) {
 
-    val binding by lazy {ActivityAppBinding.inflate(layoutInflater) }
+    val binding by lazy { ActivityAppBinding.inflate(layoutInflater) }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
