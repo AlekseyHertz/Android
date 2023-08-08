@@ -5,9 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dto.Post
 
-class PostRepositorySQLiteImpl(private val dao : PostDao) : PostRepository {
+class PostRepositorySQLiteImpl(private val dao: PostDao) : PostRepository {
 
-//    private val gson = Gson()//.newBuilder().setPrettyPrinting().create()
+    //    private val gson = Gson()//.newBuilder().setPrettyPrinting().create()
 //    private val filename = "posts.json"
 //    private val typeToken = TypeToken.getParameterized(List::class.java, Post::class.java).type
     private var posts = emptyList<Post>()
@@ -62,6 +62,18 @@ class PostRepositorySQLiteImpl(private val dao : PostDao) : PostRepository {
     }
 
     override fun save(post: Post) {
+        /*val id = post.id
+        val saved = dao.save(post)
+        posts = if (post.id == 0L) {
+            listOf(saved) + posts
+        } else {
+            posts.map {
+                if (it.id != post.id) it else saved
+            }
+        }
+        data.value = posts
+    }*/
+
         if (post.id == 0L) {
             posts = listOf(
                 post.copy(
@@ -80,6 +92,7 @@ class PostRepositorySQLiteImpl(private val dao : PostDao) : PostRepository {
         data.value = posts
         return
     }
+
 
     override fun abortText(post: Post) {
         TODO()

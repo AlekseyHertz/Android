@@ -19,7 +19,7 @@ class PostDaoImpl(private val db: SQLiteDatabase) : PostDao {
         ${PostColumns.COLUMN_SHARED_BY_ME} BOOLEAN OT NULL DEFAULT 0,
         ${PostColumns.COLUMN_VIEW} INTEGER NOT NULL DEFAULT 0,
         ${PostColumns.COLUMN_VIEW_BY_ME} BOOLEAN OT NULL DEFAULT 0,
-        ${PostColumns.COLUMN_VIDEO} TEXT OT NULL DEFAULT 0,
+        ${PostColumns.COLUMN_VIDEO} TEXT OT NULL DEFAULT 0
         );
         """.trimIndent()
     }
@@ -103,12 +103,12 @@ class PostDaoImpl(private val db: SQLiteDatabase) : PostDao {
 
     override fun likeById(id: Long) {
         db.execSQL(
-            """
+            /* sql = */ """
             UPDATE posts SET
                 likes = likes + CASE WHEN likeByMe THEN -1 ELSE 1 END,
                 likeByMe = CASE WHEN likedByMe THEN 0 ELSE 1 END
             WHERE id = ?;
-            """.trimIndent(), arrayOf(id)
+            """.trimIndent(), /* bindArgs = */ arrayOf(id)
         )
     }
 

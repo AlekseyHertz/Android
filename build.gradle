@@ -5,6 +5,14 @@ plugins {
     id 'org.jetbrains.kotlin.android' version '1.8.21' apply false
 }
 
+/*subprojects {
+    tasks.withType(org.jetbrains.kotlin.gradle.tasls.KotlinCompile) {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+}
+
+ */
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
