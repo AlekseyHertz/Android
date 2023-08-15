@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.PostRepository
-import ru.netology.nmedia.repository.PostRepositorySQLiteImpl
+import ru.netology.nmedia.repository.PostRepositoryRoomImpl
 
 private val empty = Post(
     id = 0,
@@ -22,10 +22,12 @@ private val empty = Post(
     videoUrl = ""
 )
 
-class PostViewModel(application: Application) : AndroidViewModel (application) {
+class PostViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository: PostRepository = PostRepositorySQLiteImpl (
-        AppDb.getInstance(application).postDao)
+    private val repository: PostRepository = PostRepositoryRoomImpl(
+        AppDb.getInstance(application).postDao
+    )
+
     //private val repository: PostRepository = PostRepositoryFileImpl(application)
     val data = repository.getAll()
     val edited = MutableLiveData(empty)
@@ -55,7 +57,7 @@ class PostViewModel(application: Application) : AndroidViewModel (application) {
         }
     }
 
-    fun abortText () {
+    fun abortText() {
         edited.value?.let {
             edited.value = empty
         }
