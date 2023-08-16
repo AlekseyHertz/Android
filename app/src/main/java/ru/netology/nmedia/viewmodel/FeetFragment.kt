@@ -77,7 +77,7 @@ class FeedFragment : Fragment() {
             }
 
             override fun onShare(post: Post) {
-                //viewModel.shareById(post.id)
+                viewModel.shareById(post.id)
                 val intent = Intent().apply {
                     action = Intent.ACTION_SEND
                     type = "text/plain"

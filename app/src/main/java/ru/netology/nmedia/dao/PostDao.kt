@@ -40,4 +40,14 @@ interface PostDao {
               WHERE id = :id;
            """ )
     fun viewById (id: Long)
+
+    @Query (
+        """
+            UPDATE PostEntity SET
+              sharedCount = sharedCount + CASE WHEN shareByMe THEN -1 ELSE 1 END,
+              shareByMe = CASE WHEN shareByMe THEN 0 ELSE 1 END
+              WHERE id = :id;
+        """
+            )
+    fun sharedById (id: Long)
 }

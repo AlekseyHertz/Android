@@ -38,17 +38,15 @@ class PostRepositoryRoomImpl(
         data.value = posts
     }*/
 
-    override fun shareById(id: Long)  {
-        /*posts = posts.map {
+    override fun shareById(id: Long) = dao.sharedById (id) /* {
+        posts = posts.map {
             if (it.id != id) it else it.copy(
                 shareByMe = !it.shareByMe,
                 sharedCount = it.sharedCount + 1
             )
         }
         data.value = posts
-
-         */
-    }
+    }*/
 
     override fun viewById(id: Long) = dao.viewById (id) //{
         /*posts = posts.map {
