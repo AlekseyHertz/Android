@@ -12,4 +12,7 @@
     <string name="chooser_share_post">Choose</string>
     <string name="error_empty_content">Error</string>
     <string name="add_post">Add</string>
+    <string name="empty">empty</string>
+    <string name="network_error">network_error</string>
+    <string name="retry">retry</string>
 </resources>

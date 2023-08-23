@@ -42,6 +42,11 @@ class NewPostFragment : Fragment() {
         findNavController().navigateUp()
         }
 
+        viewModel.postCreated.observe(viewLifecycleOwner) {
+            viewModel.loadPosts()
+            findNavController().navigateUp()
+        }
+
         viewModel.edited.observe(viewLifecycleOwner) {
             post ->
             binding.edit.setText(post.content)
