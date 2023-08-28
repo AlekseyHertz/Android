@@ -17,7 +17,7 @@ private val empty = Post(
     content = "",
     author = "",
     likedByMe = false,
-    published = "",
+    published = 0,
     likes = 0,
     sharedCount = 0,
     shareByMe = false,
@@ -59,7 +59,28 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun likeById(id: Long) = repository.likeById(id)
+    fun likeById(post: Post) {
+        thread {
+            try {
+                val updated = if (post.likedByMe) {
+                    repository.unLikeById(post.id)
+                } else {
+                    repository.likeById(post.id)
+                }
+                val newPosts = _data.value?.posts?.map {
+                    if (it.id == post.id) {
+                        updated
+                    } else {
+                        it
+                    }
+                }.orEmpty()
+                _data.postValue(_data.value?.copy(posts = newPosts))
+            } catch (e: Exception){
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun shareById(id: Long) = repository.shareById(id)
     fun viewById(id: Long) = repository.viewById(id)
     fun edit(post: Post) {

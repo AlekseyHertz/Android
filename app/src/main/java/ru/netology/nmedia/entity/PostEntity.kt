@@ -5,27 +5,28 @@ import androidx.room.PrimaryKey
 import ru.netology.nmedia.dto.Post
 
 @Entity
-class PostEntity (
+data class PostEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
     val author: String,
     val content: String,
-    val published: String,
-    val likes: Int,
+    val published: Long, //String,
+    val likes: Int = 0,
     val likedByMe: Boolean = false,
-    val sharedCount: Int,
+    val sharedCount: Int = 0,
     val shareByMe: Boolean = false,
-    val viewsCount: Int,
+    val viewsCount: Int = 0,
     val viewByMe: Boolean = false,
-    val videoUrl: String
+    val videoUrl: String? = null
 ) {
     fun toDto() = Post (
-        id = id, author = author, content = content, published = published, likes = likes, likedByMe = likedByMe, sharedCount = sharedCount, shareByMe = shareByMe, viewsCount = viewsCount, viewByMe = viewByMe, videoUrl = videoUrl
+        id, author, content, published, likes, likedByMe, sharedCount, shareByMe, viewsCount, viewByMe,
+        videoUrl!!
             )
 
     companion object {
-        fun fromDto (post: Post) = PostEntity (
-            id = post.id, author = post.author, content = post.content, published = post.published, likes = post.likes, likedByMe = post.likedByMe, sharedCount = post.sharedCount, shareByMe = post.shareByMe, viewsCount = post.viewsCount, viewByMe = post.viewByMe, videoUrl = post.videoUrl
+        fun fromDto (dto: Post) = PostEntity (
+            dto.id, dto.author, dto.content, dto.published, dto.likes, dto.likedByMe, dto.sharedCount, dto.shareByMe, dto.viewsCount, dto.viewByMe, dto.videoUrl
         )
     }
 }

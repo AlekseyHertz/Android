@@ -6,6 +6,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.internal.EMPTY_REQUEST
 import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dto.Post
 import java.util.concurrent.TimeUnit
@@ -57,7 +58,20 @@ class PostRepositoryImpl(
     /*override fun getAll(): LiveData<List<Post>> =
         dao.getAll().map { list -> list.map { it.toDto() } }
 */
-    override fun likeById(id: Long) = dao.likeById(id) /*{
+    override fun likeById(id: Long):Post {
+        val request = Request.Builder()
+            .post(EMPTY_REQUEST)
+            .url("${BASE_URL}/api/slow/posts/$id/likes")
+            .build()
+
+        return clien.newCall(request)
+            .execute()
+            .body?.string()
+            ?.let {
+                gson.fromJson(it, Post::class.java)
+            } ?: throw RuntimeException("body is null")
+    }
+    /*= dao.likeById(id) {
         dao.likeById(id)
         posts.map {
             if (it.id != id) it else it.copy(
@@ -68,6 +82,20 @@ class PostRepositoryImpl(
         //dao.likeById(id)
         data.value = posts
     }*/
+
+    override fun unLikeById(id: Long) :Post {
+        val request = Request.Builder()
+            .delete()
+            .url("${BASE_URL}/api/slow/posts/$id/likes")
+            .build()
+
+        return clien.newCall(request)
+            .execute()
+            .body?.string()
+            ?.let {
+                gson.fromJson(it, Post::class.java)
+            } ?: throw RuntimeException("body is null")
+    }
 
     override fun shareById(id: Long) = dao.sharedById(id) /* {
         posts = posts.map {
@@ -102,6 +130,7 @@ class PostRepositoryImpl(
 
         clien.newCall(request)
             .execute()
+            .close()
     }
     /*= dao.removeById(id) {
         dao.removeById(id)

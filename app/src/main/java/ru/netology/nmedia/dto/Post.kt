@@ -4,14 +4,14 @@ data class Post(
     val id: Long,
     val author: String,
     val content: String,
-    val published: String,
+    val published: Long,
     val likes: Int,
     val likedByMe: Boolean = false,
     val sharedCount: Int,
     val shareByMe: Boolean = false,
     val viewsCount: Int,
     val viewByMe: Boolean = false,
-    val videoUrl: String
+    val videoUrl: String = null!!
 )
 
 fun convertCount(element: Int) =
