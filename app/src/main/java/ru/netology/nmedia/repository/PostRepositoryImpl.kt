@@ -49,6 +49,8 @@ class PostRepositoryImpl(
                 gson.fromJson(it, typeToken.type)
             }
     }
+
+
     /*init {
     }
         posts = dao.getAll()

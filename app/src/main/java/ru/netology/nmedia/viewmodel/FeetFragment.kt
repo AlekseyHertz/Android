@@ -19,6 +19,7 @@ import ru.netology.nmedia.adapter.PostAdapter
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.viewmodel.NewPostFragment.Companion.textArg
+import kotlin.concurrent.thread
 
 class FeedFragment : Fragment() {
 
@@ -112,6 +113,12 @@ class FeedFragment : Fragment() {
             container,
             false
         )
+
+        binding.swipeRefresh.setOnRefreshListener {
+            thread {
+                viewModel.loadPosts()
+            }
+        }
 
         binding.list.adapter = adapter
         viewModel.data.observe(viewLifecycleOwner) { state ->

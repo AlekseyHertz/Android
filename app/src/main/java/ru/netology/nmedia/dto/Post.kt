@@ -11,7 +11,7 @@ data class Post(
     val shareByMe: Boolean = false,
     val viewsCount: Int,
     val viewByMe: Boolean = false,
-    val videoUrl: String = null!!
+    val videoUrl: String? = null
 )
 
 fun convertCount(element: Int) =

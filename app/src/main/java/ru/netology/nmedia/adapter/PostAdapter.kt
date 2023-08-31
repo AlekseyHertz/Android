@@ -21,7 +21,6 @@ interface OnInteractionListener {
     fun onRemove(post: Post) {}
     fun save(post: Post) {}
     fun abortText(post: Post) {}
-
     fun playVideo(post: Post) {}
     fun onPost(post: Post) {}
 }
@@ -57,6 +56,7 @@ class PostViewHolder(
             content.setOnClickListener {
                 Log.d("stuff", "content")
                 onInteractionListener.onPost(post)
+
             }
             like.text = convertCount(post.likes)
             share.text = convertCount(post.sharedCount)
@@ -88,7 +88,6 @@ class PostViewHolder(
                 //viewCallBack(post)
             }
 
-
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)
@@ -108,7 +107,7 @@ class PostViewHolder(
                 }.show()
             }
 
-            if (post.videoUrl.isNotBlank()) {
+            if (!post.videoUrl.isNullOrBlank()) {
                 videoLayout.visibility = View.VISIBLE
             } else {
                 videoLayout.visibility = View.GONE
