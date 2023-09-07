@@ -19,7 +19,6 @@ import ru.netology.nmedia.adapter.PostAdapter
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.viewmodel.NewPostFragment.Companion.textArg
-import kotlin.concurrent.thread
 
 class FeedFragment : Fragment() {
 
@@ -67,7 +66,7 @@ class FeedFragment : Fragment() {
         }
 
         override fun onLike(post: Post) {
-            viewModel.likeById(post)
+            viewModel.likeById()
         }
 
         override fun onView(post: Post) {
@@ -75,7 +74,7 @@ class FeedFragment : Fragment() {
         }
 
         override fun onRemove(post: Post) {
-            viewModel.removeById(post.id)
+            viewModel.removeById(post)
         }
 
         override fun onShare(post: Post) {
@@ -114,17 +113,15 @@ class FeedFragment : Fragment() {
             false
         )
 
-        binding.swipeRefresh.setOnRefreshListener {
-            thread {
-                viewModel.loadPosts()
-            }
-        }
-
         binding.list.adapter = adapter
         viewModel.data.observe(viewLifecycleOwner) { state ->
             binding.errorGroup.isVisible = state.error
             binding.empty.isVisible = state.empty
             binding.progress.isVisible = state.loading
+            binding.swipeRefresh.isRefreshing = state.loading
+            binding.swipeRefresh.setOnRefreshListener {
+                setMenuVisibility(true)
+            }
             adapter.submitList(state.posts)
         }
 
