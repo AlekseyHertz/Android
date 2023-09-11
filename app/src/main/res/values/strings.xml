@@ -14,5 +14,7 @@
     <string name="add_post">Add</string>
     <string name="empty">empty</string>
     <string name="network_error">network_error</string>
+    <string name="repead">repead_a_few_time</string>
+    <string name="error_download">error_download</string>
     <string name="retry">retry</string>
 </resources>

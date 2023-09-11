@@ -19,14 +19,9 @@ import ru.netology.nmedia.repository.Helper
 import ru.netology.nmedia.viewmodel.PostViewModel
 
 class PostFragment() : Fragment() {
-
     companion object {
         var Bundle.postId by Helper.LongArg
     }
-
-    private val viewModel: PostViewModel by viewModels(
-        ownerProducer = ::requireParentFragment
-    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,7 +34,13 @@ class PostFragment() : Fragment() {
             false
         )
 
-        val postViewHolder = PostViewHolder(binding.post, object : OnInteractionListener {
+        val viewModel: PostViewModel by viewModels(
+            ownerProducer = ::requireParentFragment
+        )
+
+        val postId = arguments?.getLong("postId")
+
+        val adapter = PostViewHolder(binding.post, object : OnInteractionListener {
             override fun onEdit(post: Post) {
                 viewModel.edit(post)
                 findNavController().navigate(
@@ -56,7 +57,7 @@ class PostFragment() : Fragment() {
             }
 
             override fun onLike(post: Post) {
-                viewModel.likeById(post)
+                viewModel.likeById(post.id)
             }
 
             override fun onView(post: Post) {
@@ -65,6 +66,7 @@ class PostFragment() : Fragment() {
 
             override fun onRemove(post: Post) {
                 viewModel.removeById(post.id)
+                findNavController().navigateUp()
             }
 
             override fun onShare(post: Post) {

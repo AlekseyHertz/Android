@@ -1,9 +1,10 @@
-package ru.netology.nmedia
+package ru.netology.nmedia.garbage
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
+import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.ActivityIntentHandlerBinding
 
 class IntentHandlerActivity : AppCompatActivity() {

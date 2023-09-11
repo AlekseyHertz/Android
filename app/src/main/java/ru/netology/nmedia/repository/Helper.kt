@@ -31,4 +31,17 @@ object Helper {
         override fun getValue(thisRef: Bundle, property: KProperty<*>): Long =
             thisRef.getLong(property.name)
     }
+    /*fun glideDownloadImage (url:String, view: View)  {
+        Glide.with(view)
+            .load(url)
+            .placeholder(R.drawable.ic_download_24)
+            .error(R.drawable.ic_error_24)
+            .timeout(10_000)
+            .centerInside()
+            .centerCrop()
+            .circleCrop()
+            .into(view as ImageView)
+    }
+
+     */
 }

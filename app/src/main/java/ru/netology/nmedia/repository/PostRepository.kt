@@ -17,14 +17,14 @@ interface PostRepository {
     fun playVideo(post: Post) {}
 
     fun getAllAsync(callback: Callback<List<Post>>)
-    fun saveAsync(post: Post, callback: Callback<Post>)
-    fun getByIdAsync(id: Post, callback: Callback<Post>)
-    fun likeByIdAsync(id: Post, callback: Callback<Post>)
-    fun unLikeByIdAsync(id: Post, callback: Callback<Post>)
-    fun removeByIdAsync(id: Post, callback: Callback<Post>)
+    fun saveAsync(post: Post, callback: Callback<Unit>)
+    //fun getByIdAsync(id: Post, callback: Callback<Post>)
+    fun likeByIdAsync(id: Long, callback: Callback<Post>)
+    fun unLikeByIdAsync(id: Long, callback: Callback<Post>)
+    fun removeByIdAsync(id: Long, callback: Callback<Unit>)
 
     interface Callback<T> {
         fun onSuccess(post: T)
-        fun onError()
+        fun onError(e: Exception)
     }
 }

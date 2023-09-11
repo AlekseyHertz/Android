@@ -8,10 +8,12 @@ import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.dto.convertCount
+import ru.netology.nmedia.repository.PostRepositoryImpl.Companion.BASE_URL
 
 interface OnInteractionListener {
     fun onLike(post: Post) {}
@@ -26,7 +28,7 @@ interface OnInteractionListener {
 }
 
 class PostAdapter(
-    private val onInteractionListener: OnInteractionListener,
+    private val onInteractionListener: OnInteractionListener
 ) : ListAdapter<Post, PostViewHolder>(PostDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -56,8 +58,30 @@ class PostViewHolder(
             content.setOnClickListener {
                 Log.d("stuff", "content")
                 onInteractionListener.onPost(post)
-
             }
+
+            Glide.with(avatar)
+                .load("${BASE_URL}/avatars/${post.authorAvatar}")
+                .placeholder(R.drawable.ic_download_24)
+                .error(R.drawable.ic_error_24)
+                .timeout(10_000)
+                .circleCrop()
+                .into(binding.avatar)
+
+            /*Glide.with(typeAttachment)
+                .load("${BASE_URL}/image/${post.attachment}")
+                .placeholder(R.drawable.ic_download_24)
+                .error(R.drawable.ic_error_24)
+                .timeout(10_000)
+                .into(binding.typeAttachment)
+            
+            if (post.attachment != null) {
+                typeAttachment.visibility = View.VISIBLE
+            } else {
+                typeAttachment.visibility = View.GONE
+            }*/
+
+
             like.text = convertCount(post.likes)
             share.text = convertCount(post.sharedCount)
             //likeCount.text = convertCount(post.likes)
@@ -97,10 +121,12 @@ class PostViewHolder(
                                 onInteractionListener.onRemove(post)
                                 true
                             }
+
                             R.id.edit -> {
                                 onInteractionListener.onEdit(post)
                                 true
                             }
+
                             else -> false
                         }
                     }

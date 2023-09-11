@@ -10,8 +10,8 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.PostFragment.Companion.postId
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.OnInteractionListener
@@ -22,11 +22,9 @@ import ru.netology.nmedia.viewmodel.NewPostFragment.Companion.textArg
 
 class FeedFragment : Fragment() {
 
-    private val viewModel: PostViewModel by viewModels(
-        ownerProducer = ::requireParentFragment
-    )
-
-    private val viewModel2: PostViewModel by activityViewModels()
+    private val viewModel: PostViewModel by activityViewModels()
+//        ownerProducer = ::requireParentFragment)
+//    private val viewModel2: PostViewModel by activityViewModels()
 
     /*val newPostLauncher = registerForActivityResult(NewPostContract) { text ->
         text?: return@registerForActivityResult
@@ -49,91 +47,97 @@ class FeedFragment : Fragment() {
             viewModel.save()
         }
     }*/
-
-    val adapter = PostAdapter(object : OnInteractionListener {
-        override fun onEdit(post: Post) {
-            viewModel.edit(post)
-            //newPostLauncher.launch(post.content)
-            findNavController().navigate(
-                R.id.action_feedFragment_to_newPostFragment,
-                bundleOf("content" to post.content)
-            )
-        }
-
-        override fun playVideo(post: Post) {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.videoUrl))
-            startActivity(intent)
-        }
-
-        override fun onLike(post: Post) {
-            viewModel.likeById()
-        }
-
-        override fun onView(post: Post) {
-            viewModel.viewById(post.id)
-        }
-
-        override fun onRemove(post: Post) {
-            viewModel.removeById(post)
-        }
-
-        override fun onShare(post: Post) {
-            viewModel.shareById(post.id)
-            val intent = Intent().apply {
-                action = Intent.ACTION_SEND
-                type = "text/plain"
-                putExtra(Intent.EXTRA_TEXT, post.content)
-
-            }
-
-            /*val shareIntent =
-                Intent.createChooser(intent.getString(R.string.chooser_share_post))
-            startActivity(shareIntent)
-*/
-            val chooser = Intent.createChooser(intent, getString(R.string.chooser_share_post))
-            startActivity(chooser)
-        }
-
-        override fun onPost(post: Post) {
-            findNavController().navigate(R.id.action_feedFragment_to_postFragment, Bundle().apply {
-                postId = post.id
-            }
-            )
-        }
-    })
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        super.onCreate(savedInstanceState)
         val binding = FragmentFeedBinding.inflate(
             inflater,
             container,
             false
         )
+        val adapter = PostAdapter(object : OnInteractionListener {
+            override fun onEdit(post: Post) {
+                viewModel.edit(post)
+                //newPostLauncher.launch(post.content)
+                findNavController().navigate(
+                    R.id.action_feedFragment_to_newPostFragment,
+                    bundleOf().apply {
+                        textArg = post.content
+                    }
+                )
+            }
+
+            override fun playVideo(post: Post) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.videoUrl))
+                startActivity(intent)
+            }
+
+            override fun onLike(post: Post) {
+                viewModel.likeById(post.id)
+            }
+
+            override fun onView(post: Post) {
+                viewModel.viewById(post.id)
+            }
+
+            override fun onRemove(post: Post) {
+                viewModel.removeById(post.id)
+            }
+
+            override fun onShare(post: Post) {
+                viewModel.shareById(post.id)
+                val intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, post.content)
+                    type = "text/plain"
+                }
+                /*val shareIntent =
+                    Intent.createChooser(intent, getString(R.string.chooser_share_post))
+                startActivity(shareIntent)
+
+                val chooser = Intent.createChooser(intent, getString(R.string.chooser_share_post))
+                startActivity(chooser)
+                 */
+            }
+
+            override fun onPost(post: Post) {
+                findNavController().navigate(
+                    R.id.action_feedFragment_to_postFragment,
+                    Bundle().apply {
+                        postId = post.id
+                    }
+                )
+            }
+        })
 
         binding.list.adapter = adapter
         viewModel.data.observe(viewLifecycleOwner) { state ->
             binding.errorGroup.isVisible = state.error
             binding.empty.isVisible = state.empty
             binding.progress.isVisible = state.loading
-            binding.swipeRefresh.isRefreshing = state.loading
-            binding.swipeRefresh.setOnRefreshListener {
-                setMenuVisibility(true)
+            binding.swipeRefresh.isRefreshing = state.refreshing
+            binding.retry.setOnClickListener {
+                viewModel.loadPosts()
+            }
+            if (state.error) {
+                Snackbar.make(binding.root, R.string.error_download, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.repead) { viewModel.loadPosts() }
+                    .show()
             }
             adapter.submitList(state.posts)
-        }
 
-        binding.add.setOnClickListener {
-            findNavController().navigate(R.id.action_feedFragment_to_newPostFragment,
-                Bundle().apply {
-                    textArg = ""
-                }
-            )
-            //newPostLauncher.launch(null)
+            binding.add.setOnClickListener {
+                findNavController().navigate(R.id.action_feedFragment_to_newPostFragment,
+                    Bundle().apply {
+                        textArg = ""
+                    }
+                )
+                //newPostLauncher.launch(null)
+            }
         }
-
         return binding.root
 
         /*viewModel.edited.observe(this) { post ->
