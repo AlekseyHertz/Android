@@ -9,11 +9,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import ru.netology.nmedia.BuildConfig.BASE_URL
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.dto.convertCount
-import ru.netology.nmedia.repository.PostRepositoryImpl.Companion.BASE_URL
 
 interface OnInteractionListener {
     fun onLike(post: Post) {}
@@ -61,7 +61,7 @@ class PostViewHolder(
             }
 
             Glide.with(avatar)
-                .load("${BASE_URL}/avatars/${post.authorAvatar}")
+                .load("${BASE_URL}avatars/${post.authorAvatar}")
                 .placeholder(R.drawable.ic_download_24)
                 .error(R.drawable.ic_error_24)
                 .timeout(10_000)

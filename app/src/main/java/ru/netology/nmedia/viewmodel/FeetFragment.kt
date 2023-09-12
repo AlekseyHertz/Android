@@ -76,31 +76,19 @@ class FeedFragment : Fragment() {
             }
 
             override fun onLike(post: Post) {
-                viewModel.likeById(post.id)
+                if (!post.likedByMe) {
+                    viewModel.likeById(post.id)
+                } else {
+                    viewModel.unLikeById(post.id)
+                }
             }
 
-            override fun onView(post: Post) {
+            /*override fun onView(post: Post) {
                 viewModel.viewById(post.id)
-            }
+            }*/
 
             override fun onRemove(post: Post) {
                 viewModel.removeById(post.id)
-            }
-
-            override fun onShare(post: Post) {
-                viewModel.shareById(post.id)
-                val intent = Intent().apply {
-                    action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_TEXT, post.content)
-                    type = "text/plain"
-                }
-                /*val shareIntent =
-                    Intent.createChooser(intent, getString(R.string.chooser_share_post))
-                startActivity(shareIntent)
-
-                val chooser = Intent.createChooser(intent, getString(R.string.chooser_share_post))
-                startActivity(chooser)
-                 */
             }
 
             override fun onPost(post: Post) {
@@ -111,10 +99,27 @@ class FeedFragment : Fragment() {
                     }
                 )
             }
+
+            /*override fun onShare(post: Post) {
+                    viewModel.shareById(post.id)
+                    val intent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_TEXT, post.content)
+                        type = "text/plain"
+                    }*/
+            /*val shareIntent =
+                Intent.createChooser(intent, getString(R.string.chooser_share_post))
+            startActivity(shareIntent)
+
+            val chooser = Intent.createChooser(intent, getString(R.string.chooser_share_post))
+            startActivity(chooser)
+             */
+
         })
 
         binding.list.adapter = adapter
-        viewModel.data.observe(viewLifecycleOwner) { state ->
+        viewModel.data.observe(viewLifecycleOwner)
+        { state ->
             binding.errorGroup.isVisible = state.error
             binding.empty.isVisible = state.empty
             binding.progress.isVisible = state.loading

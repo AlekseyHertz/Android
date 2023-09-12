@@ -60,16 +60,16 @@ class PostFragment() : Fragment() {
                 viewModel.likeById(post.id)
             }
 
-            override fun onView(post: Post) {
+            /*override fun onView(post: Post) {
                 viewModel.viewById(post.id)
-            }
+            }*/
 
             override fun onRemove(post: Post) {
                 viewModel.removeById(post.id)
                 findNavController().navigateUp()
             }
 
-            override fun onShare(post: Post) {
+            /*override fun onShare(post: Post) {
                 viewModel.shareById(post.id)
                 val intent = Intent().apply {
                     action = Intent.ACTION_SEND
@@ -84,6 +84,8 @@ class PostFragment() : Fragment() {
                 val chooser = Intent.createChooser(intent, getString(R.string.chooser_share_post))
                 startActivity(chooser)
             }
+
+             */
         })
 
 
