@@ -18,7 +18,8 @@ data class PostEntity(
     val shareByMe: Boolean = false,
     val viewsCount: Int = 0,
     val viewByMe: Boolean = false,
-    val videoUrl: String? = null
+    val videoUrl: String? = null,
+    //var attachment: Attachment? = null
 ) {
     fun toDto() = Post(
         id,
@@ -33,6 +34,7 @@ data class PostEntity(
         viewsCount,
         viewByMe,
         videoUrl!!
+        //attachment = Attachment("","","")
     )
 
     companion object {

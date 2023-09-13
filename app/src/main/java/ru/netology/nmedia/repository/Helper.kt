@@ -11,7 +11,8 @@ object Helper {
 
     object AndroidUtils {
         fun hideKeyboard(view: View) {
-            val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val imm =
+                view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
@@ -20,6 +21,7 @@ object Helper {
         override fun setValue(thisRef: Bundle, property: KProperty<*>, value: String?) {
             thisRef.putString(property.name, value)
         }
+
         override fun getValue(thisRef: Bundle, property: KProperty<*>): String? =
             thisRef.getString(property.name)
     }
@@ -28,20 +30,8 @@ object Helper {
         override fun setValue(thisRef: Bundle, property: KProperty<*>, value: Long) {
             thisRef.putLong(property.name, value)
         }
+
         override fun getValue(thisRef: Bundle, property: KProperty<*>): Long =
             thisRef.getLong(property.name)
     }
-    /*fun glideDownloadImage (url:String, view: View)  {
-        Glide.with(view)
-            .load(url)
-            .placeholder(R.drawable.ic_download_24)
-            .error(R.drawable.ic_error_24)
-            .timeout(10_000)
-            .centerInside()
-            .centerCrop()
-            .circleCrop()
-            .into(view as ImageView)
-    }
-
-     */
 }

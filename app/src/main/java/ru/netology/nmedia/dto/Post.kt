@@ -13,12 +13,12 @@ data class Post(
     val viewsCount: Int,
     val viewByMe: Boolean = false,
     val videoUrl: String? = null,
-    /*val attachment: Attachment? = null,
+    var attachment: Attachment? = null,
 )
 data class Attachment (
     val url: String = "",
     val description: String = "",
-    val type : String = ""*/
+    val type : String = ""
 )
 
 fun convertCount(element: Int) =

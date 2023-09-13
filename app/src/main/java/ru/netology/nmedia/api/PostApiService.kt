@@ -15,7 +15,7 @@ import ru.netology.nmedia.BuildConfig
 import ru.netology.nmedia.dto.Post
 import java.util.concurrent.TimeUnit
 
-private val Download_URL = "http://10.0.2.2:9999/"
+val glideDownloadUrl = "http://10.0.2.2:9999/"
 
 private val client = OkHttpClient.Builder()
     .connectTimeout(60, TimeUnit.SECONDS)

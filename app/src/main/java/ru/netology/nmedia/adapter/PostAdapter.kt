@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import ru.netology.nmedia.BuildConfig.BASE_URL
 import ru.netology.nmedia.R
+import ru.netology.nmedia.api.glideDownloadUrl
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.dto.convertCount
@@ -60,16 +60,16 @@ class PostViewHolder(
                 onInteractionListener.onPost(post)
             }
 
-            Glide.with(avatar)
-                .load("${BASE_URL}avatars/${post.authorAvatar}")
-                .placeholder(R.drawable.ic_download_24)
-                .error(R.drawable.ic_error_24)
-                .timeout(10_000)
-                .circleCrop()
-                .into(binding.avatar)
+            Glide.with(binding.avatar)
+                    .load("${glideDownloadUrl}avatars/${post.authorAvatar}")
+                    .placeholder(R.drawable.ic_download_24)
+                    .error(R.drawable.ic_error_24)
+                    .timeout(10_000)
+                    .circleCrop()
+                    .into(binding.avatar)
 
-            /*Glide.with(typeAttachment)
-                .load("${BASE_URL}/image/${post.attachment}")
+            Glide.with(typeAttachment)
+                .load("${glideDownloadUrl}/image/${post.attachment}")
                 .placeholder(R.drawable.ic_download_24)
                 .error(R.drawable.ic_error_24)
                 .timeout(10_000)
@@ -79,8 +79,7 @@ class PostViewHolder(
                 typeAttachment.visibility = View.VISIBLE
             } else {
                 typeAttachment.visibility = View.GONE
-            }*/
-
+            }
 
             like.text = convertCount(post.likes)
             share.text = convertCount(post.sharedCount)
