@@ -15,7 +15,7 @@ interface PostRepository {
 //    fun abortText(post: Post)
 //    fun playVideo(post: Post) {}
     fun getAllAsync(callback: Callback<List<Post>>)
-//    fun saveAsync(post: Post, callback: Callback<Unit>)
+    fun saveAsync(post: Post, callback: Callback<Unit>)
 //    fun getByIdAsync(id: Post, callback: Callback<Post>)
     fun likeByIdAsync(id: Long, callback: Callback<Post>)
     fun unLikeByIdAsync(id: Long, callback: Callback<Post>)

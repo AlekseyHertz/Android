@@ -61,24 +61,24 @@ class PostViewHolder(
             }
 
             Glide.with(binding.avatar)
-                    .load("${glideDownloadUrl}avatars/${post.authorAvatar}")
-                    .placeholder(R.drawable.ic_download_24)
-                    .error(R.drawable.ic_error_24)
-                    .timeout(10_000)
-                    .circleCrop()
-                    .into(binding.avatar)
+                .load("${glideDownloadUrl}avatars/${post.authorAvatar}")
+                .placeholder(R.drawable.ic_download_24)
+                .error(R.drawable.ic_error_24)
+                .timeout(10_000)
+                .circleCrop()
+                .into(binding.avatar)
 
             Glide.with(typeAttachment)
-                .load("${glideDownloadUrl}/image/${post.attachment}")
+                .load("${glideDownloadUrl}images/${post.attachment?.url}")
                 .placeholder(R.drawable.ic_download_24)
                 .error(R.drawable.ic_error_24)
                 .timeout(10_000)
                 .into(binding.typeAttachment)
-            
+
             if (post.attachment != null) {
-                typeAttachment.visibility = View.VISIBLE
+                attachmentAll.visibility = View.VISIBLE
             } else {
-                typeAttachment.visibility = View.GONE
+                attachmentAll.visibility = View.GONE
             }
 
             like.text = convertCount(post.likes)

@@ -234,31 +234,26 @@ class PostRepositoryImpl : PostRepository {
         PostApi.service.savePost(post)
             .execute()
     }
-}
 
-/*override fun saveAsync(post: Post, callback: PostRepository.Callback<Unit>) {
-    val request = Request.Builder()
-        .url("${BASE_URL}/api/slow/posts")
-        .post(gson.toJson(post).toRequestBody(mediaType))
-        .build()
-    client.newCall(request)
-        .enqueue(object : Callback {
-            override fun onResponse(call: Call, response: Response) {
-                val body = response.body?.string() ?: error("body is null")
-                try {
-                    callback.onSuccess(Unit)//gson.fromJson(body, Post::class.java))
-                } catch (e: java.lang.Exception) {
-                    callback.onError(e)
+
+    override fun saveAsync(post: Post, callback: PostRepository.Callback<Unit>) {
+        PostApi.service.savePost(post)
+            .enqueue(object : Callback<Post> {
+                override fun onResponse(call: Call<Post>, response: Response<Post>) {
+                    val body = response.body() ?: error("body is null")
+                    try {
+                        callback.onSuccess(Unit)//gson.fromJson(body, Post::class.java))
+                    } catch (e: Exception) {
+                        callback.onError(e)
+                    }
                 }
-            }
 
-            override fun onFailure(call: Call, e: IOException) {
-                callback.onError(e)
-            }
-        })
+                override fun onFailure(call: Call<Post>, t: Throwable) {
+                    callback.onError(Exception(t))
+                }
+            })
+    }
 }
-
- */
 
 
 /*= dao.save(PostEntity.fromDto(post)) {
