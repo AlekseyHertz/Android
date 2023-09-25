@@ -1,10 +1,8 @@
 package ru.netology.nmedia.repository // из PostRepositoryFileImpl
 
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import ru.netology.nmedia.api.PostApi
 import ru.netology.nmedia.dto.Post
+import java.io.IOException
 
 class PostRepositoryImpl : PostRepository {
     /*  убрали фрагмент после внесения api */
@@ -32,20 +30,26 @@ class PostRepositoryImpl : PostRepository {
 
     /*  убрали фрагмент после внесения api */
 
-    override fun getAll(): List<Post> {
-        return PostApi.service.getAll()
-            .execute()
-            .let {
-                it.body() ?: throw RuntimeException("body is null")
+    override suspend fun getAll(): List<Post> {
+        try {
+            val response = PostApi.service.getAll()
+            if (!response.isSuccessful) {
+                throw Exception("error")
             }
+            val body = response.body() ?: throw Exception("error")
+        } catch (e: IOException) {
+            throw Exception("error")
+        } catch (e: Exception) {
+            throw Exception("error")
+        }
+        return TODO("Provide the return value")
     }
 
-    override fun getById(id: Long) {
+    override suspend fun getById(id: Long) {
         PostApi.service.getById(id)
-            .execute()
     }
 
-    override fun getAllAsync(callback: PostRepository.Callback<List<Post>>) {
+    /*override fun getAllAsync(callback: PostRepository.Callback<List<Post>>) {
         return PostApi.service.getAll()
             .enqueue(object : Callback<List<Post>> {
                 override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
@@ -66,8 +70,7 @@ class PostRepositoryImpl : PostRepository {
             })
     }
 
-
-    /*override fun getAllAsync(callback: PostRepository.Callback<List<Post>>) {
+    override fun getAllAsync(callback: PostRepository.Callback<List<Post>>) {
         val request: Request = Request.Builder()
             .url("${BASE_URL}/api/slow/posts")
             .build()
@@ -98,7 +101,7 @@ class PostRepositoryImpl : PostRepository {
     /*override fun getAll(): LiveData<List<Post>> =
         dao.getAll().map { list -> list.map { it.toDto() } }
     */
-    override fun likeByIdAsync(id: Long, callback: PostRepository.Callback<Post>) {
+    /*override fun likeByIdAsync(id: Long, callback: PostRepository.Callback<Post>) {
         PostApi.service.likePost(id)
             .enqueue(object : Callback<Post> {
                 override fun onResponse(call: Call<Post>, response: Response<Post>) {
@@ -115,13 +118,21 @@ class PostRepositoryImpl : PostRepository {
                     callback.onError(Exception(t))
                 }
             })
-    }
+    }*/
 
 
-    override fun likeById(id: Long) {
-        PostApi.service.likePost(id)
-            .execute()
+    override suspend fun likeById(post: Post) {
+        try {
+            val response = if (post.likedByMe != post.likedByMe) {
+                PostApi.service.likePost(post.id)
+            } else {
+                PostApi.service.unLikePost(post.id)
+            }
+        } catch (e: IOException) {
+            throw (error("IO error"))
+        }
     }
+
     /*= dao.likeById(id) {
         dao.likeById(id)
         posts.map {
@@ -134,7 +145,7 @@ class PostRepositoryImpl : PostRepository {
         data.value = posts
     }*/
 
-    override fun unLikeByIdAsync(id: Long, callback: PostRepository.Callback<Post>) {
+    /*override fun unLikeByIdAsync(id: Long, callback: PostRepository.Callback<Post>) {
         PostApi.service.unLikePost(id)
             .enqueue(object : Callback<Post> {
                 override fun onResponse(call: Call<Post>, response: Response<Post>) {
@@ -151,11 +162,18 @@ class PostRepositoryImpl : PostRepository {
                     callback.onError(Exception(t))
                 }
             })
-    }
+    }*/
 
-    override fun unLikeById(id: Long) {
-        PostApi.service.unLikePost(id)
-            .execute()
+    override suspend fun unLikeById(post: Post) {
+        try {
+            val response = if (post.likedByMe != post.likedByMe) {
+                PostApi.service.unLikePost(post.id)
+            } else {
+                PostApi.service.likePost(post.id)
+            }
+        } catch (e: IOException) {
+            throw (error("IO error"))
+        }
     }
 
     /*override fun shareById(id: Long) {} = dao.sharedById(id)  {
@@ -205,7 +223,7 @@ class PostRepositoryImpl : PostRepository {
     }
      */
 
-    override fun removeByIdAsync(id: Long, callback: PostRepository.Callback<Unit>) {
+    /*override fun removeByIdAsync(id: Long, callback: PostRepository.Callback<Unit>) {
         PostApi.service.deletePost(id)
             .enqueue(object : Callback<Post> {
                 override fun onResponse(call: Call<Post>, response: Response<Post>) {
@@ -217,11 +235,14 @@ class PostRepositoryImpl : PostRepository {
                     callback.onError(Exception(t))
                 }
             })
-    }
+    }*/
 
-    override fun removeById(id: Long) {
-        PostApi.service.deletePost(id)
-            .execute()
+    override suspend fun removeById(id: Long) {
+        try {
+            val response = PostApi.service.deletePost(id)
+        } catch (e:IOException){
+            throw (error("IO error"))
+        }
     }
 
     /*= dao.removeById(id) {
@@ -230,13 +251,19 @@ class PostRepositoryImpl : PostRepository {
         data.value = posts
     }*/
 
-    override fun save(post: Post) {
-        PostApi.service.savePost(post)
-            .execute()
+    override suspend fun save(post: Post) {
+        try {
+            val response = PostApi.service.savePost(post)
+            if (!response.isSuccessful) {
+                throw Exception ("error")
+            }
+        } catch (e: IOException) {
+            throw (error("IO error"))
+        }
     }
 
 
-    override fun saveAsync(post: Post, callback: PostRepository.Callback<Unit>) {
+    /*override fun saveAsync(post: Post, callback: PostRepository.Callback<Unit>) {
         PostApi.service.savePost(post)
             .enqueue(object : Callback<Post> {
                 override fun onResponse(call: Call<Post>, response: Response<Post>) {
@@ -252,7 +279,7 @@ class PostRepositoryImpl : PostRepository {
                     callback.onError(Exception(t))
                 }
             })
-    }
+    }*/
 }
 
 

@@ -1,7 +1,5 @@
 package ru.netology.nmedia //
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -51,13 +49,13 @@ class PostFragment() : Fragment() {
             }
 
 
-            override fun playVideo(post: Post) {
+            /*override fun playVideo(post: Post) {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.videoUrl))
                 startActivity(intent)
-            }
+            }*/
 
-            override fun onLike(post: Post) {
-                viewModel.likeById(post.id)
+            override fun onLike(id: Post) {
+                viewModel.likeById(id)
             }
 
             /*override fun onView(post: Post) {

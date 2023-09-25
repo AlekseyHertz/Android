@@ -33,7 +33,7 @@ interface PostDao {
     @Query("DELETE FROM PostEntity WHERE id = :id")
     fun removeById(id: Long)
 
-    @Query (
+    /*@Query (
         """
            UPDATE PostEntity SET
               viewsCount = viewsCount +1
@@ -48,6 +48,8 @@ interface PostDao {
               shareByMe = CASE WHEN shareByMe THEN 0 ELSE 1 END
               WHERE id = :id;
         """
-            )
+    )
+
     fun sharedById (id: Long)
+    */
 }

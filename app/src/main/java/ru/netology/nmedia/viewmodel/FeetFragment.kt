@@ -1,7 +1,5 @@
 package ru.netology.nmedia.viewmodel // из MainActivity
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -70,16 +68,18 @@ class FeedFragment : Fragment() {
                 )
             }
 
-            override fun playVideo(post: Post) {
+            /*override fun playVideo(post: Post) {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.videoUrl))
                 startActivity(intent)
             }
 
+             */
+
             override fun onLike(post: Post) {
                 if (!post.likedByMe) {
-                    viewModel.likeById(post.id)
+                    viewModel.likeById(post)
                 } else {
-                    viewModel.unLikeById(post.id)
+                    viewModel.unLikeById(post)
                 }
             }
 
