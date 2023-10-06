@@ -23,7 +23,8 @@ abstract class AppDb : RoomDatabase() {
 
         private fun buildDatabase(context: Context) =
             Room.databaseBuilder(context, AppDb::class.java, "app.db")
-                .allowMainThreadQueries() // разрешить сохраняться на главном потоке
+//                .allowMainThreadQueries() // разрешить сохраняться на главном потоке
+                .fallbackToDestructiveMigration()
                 .build()
 //            DbHelper(
 //            context, 1, "app.db", DDLs,

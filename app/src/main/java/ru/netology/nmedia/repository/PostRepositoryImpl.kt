@@ -1,53 +1,88 @@
 package ru.netology.nmedia.repository // из PostRepositoryFileImpl
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.map
 import ru.netology.nmedia.api.PostApi
+import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dto.Post
-import java.io.IOException
+import ru.netology.nmedia.entity.PostEntity
 
-class PostRepositoryImpl : PostRepository {
-    /*  убрали фрагмент после внесения api */
-
-    /*private val client = OkHttpClient.Builder()
-        .connectTimeout(60, TimeUnit.SECONDS)
-        .addInterceptor(HttpLoggingInterceptor().apply {
-            level = if (BuildConfig.DEBUG) {
-                HttpLoggingInterceptor.Level.BODY
-            } else {
-                HttpLoggingInterceptor.Level.NONE
-            }
-        })
-        .build()
-
-
-    private val gson = Gson()//.newBuilder().setPrettyPrinting().create()
-    private val typeToken = object : TypeToken<List<Post>>() {}//TypeToken.getParameterized(List::class.java, Post::class.java).type
-
-    companion object {
-        val BASE_URL = "http://10.0.2.2:9999"
-        private val jsonType = "application/json".toMediaType()
-        val mediaType = "application/json".toMediaType()
-    }*/
-
-    /*  убрали фрагмент после внесения api */
-
-    override suspend fun getAll(): List<Post> {
-        try {
-            val response = PostApi.service.getAll()
-            if (!response.isSuccessful) {
-                throw Exception("error")
-            }
-            val body = response.body() ?: throw Exception("error")
-        } catch (e: IOException) {
-            throw Exception("error")
-        } catch (e: Exception) {
-            throw Exception("error")
+class PostRepositoryImpl(
+    private val dao: PostDao
+) : PostRepository {
+    override val data:  LiveData<List<Post>> = dao.getAll()
+        .map {
+            it.map(PostEntity::toDto)
         }
-        return TODO("Provide the return value")
+
+    override suspend fun getAll() {
+        val postsResponse = PostApi.retrofitService.getAll()
+        if (!postsResponse.isSuccessful) {
+            throw RuntimeException(postsResponse.errorBody()?.string())
+        }
+        val posts = postsResponse.body() ?: throw java.lang.RuntimeException("body is null")
+        dao.insert(posts.map(PostEntity::fromDto))
     }
 
     override suspend fun getById(id: Long) {
-        PostApi.service.getById(id)
+        val postResponse = PostApi.retrofitService.getById(id)
+
     }
+
+    override suspend fun save(post: Post) {
+        try {
+            val postsResponse = PostApi.retrofitService.save(post)
+            if (!postsResponse.isSuccessful) {
+                throw RuntimeException(postsResponse.errorBody()?.string())
+            }
+            val newPost = postsResponse.body() ?: throw java.lang.RuntimeException("body is null")
+            dao.insert(PostEntity.fromDto(newPost))
+        } catch (e: Exception) {
+            throw Error("error")
+        }
+    }
+
+    override suspend fun removeById(id: Long) {
+        dao.removeById(id)
+        try {
+            val postsResponse = PostApi.retrofitService.removeById(id)
+            if (!postsResponse.isSuccessful) {
+                throw RuntimeException(postsResponse.errorBody()?.string())
+            }
+        } catch (e: Exception) {
+            throw Error("error")
+        }
+    }
+
+    /*override fun viewById(id: Long) {}= dao.viewById(id) //{
+    posts = posts.map {
+        if (it.id != id) it else it.copy(
+            viewsCount = it.viewsCount + 1
+        )
+    }
+    data.value = posts
+
+     */
+    /*= dao.removeById(id) {
+        dao.removeById(id)
+        posts = posts.filter { it.id != id }
+        data.value = posts
+    }
+
+    override fun removeByIdAsync(id: Long, callback: PostRepository.Callback<Unit>) {
+        PostApi.service.deletePost(id)
+            .enqueue(object : Callback<Post> {
+                override fun onResponse(call: Call<Post>, response: Response<Post>) {
+                    val body = response.body() ?: throw RuntimeException("body is null")
+                    callback.onSuccess(Unit)
+                }
+
+                override fun onFailure(call: Call<Post>, t: Throwable) {
+                    callback.onError(Exception(t))
+                }
+            })
+    }*/
+
 
     /*override fun getAllAsync(callback: PostRepository.Callback<List<Post>>) {
         return PostApi.service.getAll()
@@ -69,6 +104,7 @@ class PostRepositoryImpl : PostRepository {
                 }
             })
     }
+
 
     override fun getAllAsync(callback: PostRepository.Callback<List<Post>>) {
         val request: Request = Request.Builder()
@@ -98,10 +134,11 @@ class PostRepositoryImpl : PostRepository {
         data.value = posts
     }*/
 
+
     /*override fun getAll(): LiveData<List<Post>> =
         dao.getAll().map { list -> list.map { it.toDto() } }
-    */
-    /*override fun likeByIdAsync(id: Long, callback: PostRepository.Callback<Post>) {
+
+    override fun likeByIdAsync(id: Long, callback: PostRepository.Callback<Post>) {
         PostApi.service.likePost(id)
             .enqueue(object : Callback<Post> {
                 override fun onResponse(call: Call<Post>, response: Response<Post>) {
@@ -118,21 +155,38 @@ class PostRepositoryImpl : PostRepository {
                     callback.onError(Exception(t))
                 }
             })
-    }*/
+    }
 
-
-    override suspend fun likeById(post: Post) {
+override suspend fun save(post: Post): Post {
         try {
-            val response = if (post.likedByMe != post.likedByMe) {
-                PostApi.service.likePost(post.id)
-            } else {
-                PostApi.service.unLikePost(post.id)
+            val postsResponse = PostApi.retrofitService.save(post)
+            if (!postsResponse.isSuccessful) {
+                throw RuntimeException(postsResponse.errorBody()?.string())
             }
-        } catch (e: IOException) {
-            throw (error("IO error"))
+            val posts = postsResponse.body() ?: throw java.lang.RuntimeException("body is null")
+            dao.insert(PostEntity.fromDto(post))
+        } catch (e :Exception) {
+            throw Error("error")
+        }
+        return TODO("Provide the return value")
+    }
+     */
+    override suspend fun likeById(post: Post) {
+        dao.likeById(post.id)
+        try {
+            val postResponse = if (!post.likedByMe) {
+                PostApi.retrofitService.likeById(post.id)
+            } else {
+                PostApi.retrofitService.dislikeById(post.id)
+            }
+        } catch (e: Exception) {
+            throw Error("error")
         }
     }
 
+    override suspend fun unLikeById(post: Post) {
+        TODO()
+    }
     /*= dao.likeById(id) {
         dao.likeById(id)
         posts.map {
@@ -143,9 +197,9 @@ class PostRepositoryImpl : PostRepository {
         }
         //dao.likeById(id)
         data.value = posts
-    }*/
+    }
 
-    /*override fun unLikeByIdAsync(id: Long, callback: PostRepository.Callback<Post>) {
+    override fun unLikeByIdAsync(id: Long, callback: PostRepository.Callback<Post>) {
         PostApi.service.unLikePost(id)
             .enqueue(object : Callback<Post> {
                 override fun onResponse(call: Call<Post>, response: Response<Post>) {
@@ -163,19 +217,6 @@ class PostRepositoryImpl : PostRepository {
                 }
             })
     }*/
-
-    override suspend fun unLikeById(post: Post) {
-        try {
-            val response = if (post.likedByMe != post.likedByMe) {
-                PostApi.service.unLikePost(post.id)
-            } else {
-                PostApi.service.likePost(post.id)
-            }
-        } catch (e: IOException) {
-            throw (error("IO error"))
-        }
-    }
-
     /*override fun shareById(id: Long) {} = dao.sharedById(id)  {
         posts = posts.map {
             if (it.id != id) it else it.copy(
@@ -186,20 +227,9 @@ class PostRepositoryImpl : PostRepository {
         data.value = posts
     }*/
 
-    /*override fun viewById(id: Long) {}= dao.viewById(id) //{
-    posts = posts.map {
-        if (it.id != id) it else it.copy(
-            viewsCount = it.viewsCount + 1
-        )
-    }
-    data.value = posts
-
-     */
 //}
 
-    /*override fun onEdit(post: Post) {
-        TODO("Not yet implemented")
-    }
+    /*override fun onEdit(post: Post) {}
 
      */
 
@@ -220,108 +250,5 @@ class PostRepositoryImpl : PostRepository {
                 }
 
             })
-    }
-     */
-
-    /*override fun removeByIdAsync(id: Long, callback: PostRepository.Callback<Unit>) {
-        PostApi.service.deletePost(id)
-            .enqueue(object : Callback<Post> {
-                override fun onResponse(call: Call<Post>, response: Response<Post>) {
-                    val body = response.body() ?: throw RuntimeException("body is null")
-                    callback.onSuccess(Unit)
-                }
-
-                override fun onFailure(call: Call<Post>, t: Throwable) {
-                    callback.onError(Exception(t))
-                }
-            })
-    }*/
-
-    override suspend fun removeById(id: Long) {
-        try {
-            val response = PostApi.service.deletePost(id)
-        } catch (e:IOException){
-            throw (error("IO error"))
-        }
-    }
-
-    /*= dao.removeById(id) {
-        dao.removeById(id)
-        posts = posts.filter { it.id != id }
-        data.value = posts
-    }*/
-
-    override suspend fun save(post: Post) {
-        try {
-            val response = PostApi.service.savePost(post)
-            if (!response.isSuccessful) {
-                throw Exception ("error")
-            }
-        } catch (e: IOException) {
-            throw (error("IO error"))
-        }
-    }
-
-
-    /*override fun saveAsync(post: Post, callback: PostRepository.Callback<Unit>) {
-        PostApi.service.savePost(post)
-            .enqueue(object : Callback<Post> {
-                override fun onResponse(call: Call<Post>, response: Response<Post>) {
-                    val body = response.body() ?: error("body is null")
-                    try {
-                        callback.onSuccess(Unit)//gson.fromJson(body, Post::class.java))
-                    } catch (e: Exception) {
-                        callback.onError(e)
-                    }
-                }
-
-                override fun onFailure(call: Call<Post>, t: Throwable) {
-                    callback.onError(Exception(t))
-                }
-            })
     }*/
 }
-
-
-/*= dao.save(PostEntity.fromDto(post)) {
-    val id = post.id
-    val saved = dao.save(post)
-    posts = if (post.id == 0L) {
-        listOf(saved) + posts
-    } else {
-        posts.map {
-            if (it.id != post.id) it else saved
-        }
-    }
-    dao.save(post)
-    data.value = posts
-}
-    dao.save(post)
-    if (post.id == 0L) {
-        posts = listOf(
-            post.copy(
-                id = nextId++,
-                author = "Me",
-                likedByMe = false,
-                published = "now"
-            )
-        ) + posts
-        data.value = posts
-        dao.save(post)
-        return
-    }
-    posts = posts.map {
-        if (it.id != post.id) it else it.copy(content = post.content)
-    }
-    data.value = posts
-    dao.save(post)
-    return
-}*/
-
-/*override fun abortText(post: Post) {
-    TODO()
-}
-
-override fun playVideo(post: Post) {
-    TODO()
-}*/

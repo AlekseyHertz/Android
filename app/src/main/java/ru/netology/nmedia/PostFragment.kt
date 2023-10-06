@@ -54,8 +54,8 @@ class PostFragment() : Fragment() {
                 startActivity(intent)
             }*/
 
-            override fun onLike(id: Post) {
-                viewModel.likeById(id)
+            override fun onLike(post: Post) {
+                viewModel.likeById(post)
             }
 
             /*override fun onView(post: Post) {

@@ -8,49 +8,49 @@ import ru.netology.nmedia.dto.Post
 data class PostEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
-    val authorId: String,
-//    val authorAvatar: String,
+    val author: String,
+    val authorAvatar: String,
     val content: String,
-    val published: String,
-    val likedByMe: Boolean = false,
-    val likes: Int = 0,
-//    val sharedCount: Int = 0,
-//    val shareByMe: Boolean = false,
-//    val viewsCount: Int = 0,
-//    val viewByMe: Boolean = false,
-//    val videoUrl: String? = null,
-//    var attachment: Attachment? = null
+    val published: Long, //String,
+    val likes: Int,
+    val likedByMe: Boolean,
+    val sharedCount: Int,
+    val shareByMe: Boolean,
+    val viewsCount: Int,
+    val viewByMe: Boolean,
+    val videoUrl: String? = null,
+    //var attachment: Attachment? = null
 ) {
     fun toDto() = Post(
         id,
-        authorId,
-//        authorAvatar,
+        author,
+        authorAvatar,
         content,
         published,
+        likes,
         likedByMe,
-        likes
-//        sharedCount,
-//        shareByMe,
-//        viewsCount,
-//        viewByMe,
-//        videoUrl!!
-//        attachment = Attachment("","","")
+        sharedCount,
+        shareByMe,
+        viewsCount,
+        viewByMe,
+        videoUrl!!
+        //attachment = Attachment("","","")
     )
 
     companion object {
         fun fromDto(dto: Post) = PostEntity(
             dto.id,
-            dto.authorId,
-//            dto.authorAvatar,
+            dto.author,
+            dto.authorAvatar,
             dto.content,
             dto.published,
+            dto.likes,
             dto.likedByMe,
-            dto.likes
-//            dto.sharedCount,
-//            dto.shareByMe,
-//            dto.viewsCount,
-//            dto.viewByMe,
-//            dto.videoUrl
+            dto.sharedCount,
+            dto.shareByMe,
+            dto.viewsCount,
+            dto.viewByMe,
+            dto.videoUrl
         )
     }
 }

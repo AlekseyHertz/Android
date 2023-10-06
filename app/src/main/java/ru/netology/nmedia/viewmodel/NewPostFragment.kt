@@ -1,7 +1,6 @@
 package ru.netology.nmedia.viewmodel // из NewPostActivity
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,11 +46,13 @@ class NewPostFragment : Fragment() {
             findNavController().navigateUp()
         }
 
-        viewModel.edited.observe(viewLifecycleOwner) {
+        /*viewModel.edited.observe(viewLifecycleOwner) {
             post ->
             binding.edit.setText(post.content)
             Log.d("newPostFragment", "edit")
         }
+
+         */
 
         return binding.root
     }

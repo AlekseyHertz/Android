@@ -79,7 +79,7 @@ class FeedFragment : Fragment() {
                 if (!post.likedByMe) {
                     viewModel.likeById(post)
                 } else {
-                    viewModel.unLikeById(post)
+                    viewModel.dislikeById(post)
                 }
             }
 
@@ -120,17 +120,9 @@ class FeedFragment : Fragment() {
         binding.list.adapter = adapter
         viewModel.data.observe(viewLifecycleOwner)
         { state ->
-            binding.errorGroup.isVisible = state.error
             binding.empty.isVisible = state.empty
-            binding.progress.isVisible = state.loading
-            binding.swipeRefresh.isRefreshing = state.refreshing
             binding.retry.setOnClickListener {
                 viewModel.loadPosts()
-            }
-            if (state.error) {
-                Snackbar.make(binding.root, R.string.error_download, Snackbar.LENGTH_LONG)
-                    .setAction(R.string.repead) { viewModel.loadPosts() }
-                    .show()
             }
             adapter.submitList(state.posts)
 
@@ -140,7 +132,19 @@ class FeedFragment : Fragment() {
                         textArg = ""
                     }
                 )
-                //newPostLauncher.launch(null)
+            }
+        }
+        viewModel.state.observe(viewLifecycleOwner) {state ->
+//            binding.errorGroup.isVisible = state.error
+            binding.progress.isVisible = state.loading
+            binding.swipeRefresh.isRefreshing = state.refreshing
+            binding.swipeRefresh.setOnClickListener {
+                viewModel.refresh()
+            }
+            if (state.error) {
+                Snackbar.make(binding.root, R.string.error_download, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.repead) { viewModel.loadPosts() }
+                    .show()
             }
         }
         return binding.root

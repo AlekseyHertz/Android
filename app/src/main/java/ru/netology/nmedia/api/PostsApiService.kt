@@ -5,7 +5,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -34,7 +33,7 @@ private val retrofit = Retrofit.Builder()
     .client(client)
     .build()
 
-interface PostApiService {
+interface PostsApiService {
 
     @GET("posts")
     suspend fun getAll(): Response<List<Post>>
@@ -43,20 +42,20 @@ interface PostApiService {
     suspend fun getById(@Path("id") id: Long): Response<Post>
 
     @POST("posts")
-    suspend fun savePost(@Body post: Post): Response<Post>
+    suspend fun save(@Body post: Post): Response<Post>
 
     @DELETE("posts/{id}")
-    suspend fun deletePost(@Path("id") id: Long): Response<Post>
+    suspend fun removeById(@Path("id") id: Long): Response<Post>
 
     @POST("posts/{id}/likes")
-    suspend fun likePost(@Path("id") id: Long): Response<Post>
+    suspend fun likeById(@Path("id") id: Long): Response<Post>
 
     @DELETE("posts/{id}/likes")
-    suspend fun unLikePost(@Path("id") id: Long): Response<Post>
+    suspend fun dislikeById(@Path("id") id: Long): Response<Post>
 }
 
 object PostApi {
-    val service: PostApiService by lazy {
-        retrofit.create()
+    val retrofitService: PostsApiService by lazy {
+        retrofit.create(PostsApiService::class.java)
     }
 }

@@ -52,7 +52,7 @@ class PostViewHolder(
 
     fun bind(post: Post) {
         binding.apply {
-            author.text = post.authorId
+            author.text = post.author
             published.text = post.published.toString()
             content.text = post.content
             content.setOnClickListener {
@@ -60,15 +60,13 @@ class PostViewHolder(
                 onInteractionListener.onPost(post)
             }
 
-            /*Glide.with(binding.avatar)
+            Glide.with(binding.avatar)
                 .load("${glideDownloadUrl}avatars/${post.authorAvatar}")
                 .placeholder(R.drawable.ic_download_24)
                 .error(R.drawable.ic_error_24)
                 .timeout(10_000)
                 .circleCrop()
                 .into(binding.avatar)
-
-             */
 
             Glide.with(typeAttachment)
                 .load("${glideDownloadUrl}images/${post.attachment?.url}")
@@ -84,10 +82,10 @@ class PostViewHolder(
             }
 
             like.text = convertCount(post.likes)
-            //share.text = convertCount(post.sharedCount)
+            share.text = convertCount(post.sharedCount)
             //likeCount.text = convertCount(post.likes)
             //shareCount.text = convertCount(post.sharedCount)
-            //viewsCount.text = convertCount(post.viewsCount)
+            viewsCount.text = convertCount(post.viewsCount)
             like.isChecked = post.likedByMe
             /*like.setImageResource(
                 if (post.likedByMe) R.drawable.ic_liked_24 else R.drawable.ic_like_24
@@ -100,12 +98,12 @@ class PostViewHolder(
                 //likeCallBack(post)
             }
 
-            /*share.isChecked = post.shareByMe
+            share.isChecked = post.shareByMe
             share.setOnClickListener {
                 Log.d("stuff", "share") // оставим для logcat
                 onInteractionListener.onShare(post)
                 //shareCallBack(post)
-            }*/
+            }
 
             views.setOnClickListener {
                 Log.d("stuff", "view") // оставим для logcat
@@ -134,14 +132,14 @@ class PostViewHolder(
                 }.show()
             }
 
-            /*if (!post.videoUrl.isNullOrBlank()) {
+            if (!post.videoUrl.isNullOrBlank()) {
                 videoLayout.visibility = View.VISIBLE
             } else {
                 videoLayout.visibility = View.GONE
             }
             playButton.setOnClickListener {
                 onInteractionListener.playVideo(post)
-            }*/
+            }
 
             root.setOnClickListener {
                 onInteractionListener.onPost(post)
