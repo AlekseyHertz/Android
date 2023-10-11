@@ -33,7 +33,7 @@ data class PostEntity(
         shareByMe,
         viewsCount,
         viewByMe,
-        videoUrl!!
+        videoUrl
         //attachment = Attachment("","","")
     )
 
