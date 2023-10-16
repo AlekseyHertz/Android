@@ -14,6 +14,7 @@ data class Post(
     val viewByMe: Boolean = false,
     val videoUrl: String? = null,
     var attachment: Attachment? = null,
+    val hidden: Boolean = false,
 )
 data class Attachment (
     val url: String = "",

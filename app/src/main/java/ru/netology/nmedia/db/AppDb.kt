@@ -9,7 +9,7 @@ import ru.netology.nmedia.entity.PostEntity
 
 @Database(entities = [PostEntity::class], version = 1, exportSchema = false)
 abstract class AppDb : RoomDatabase() {
-    abstract val postDao: PostDao
+    abstract fun postDao(): PostDao
 
     companion object {
         @Volatile
@@ -26,27 +26,5 @@ abstract class AppDb : RoomDatabase() {
 //                .allowMainThreadQueries() // разрешить сохраняться на главном потоке
                 .fallbackToDestructiveMigration()
                 .build()
-//            DbHelper(
-//            context, 1, "app.db", DDLs,
-//        ).writableDatabase
     }
 }
-/*
-class DbHelper(context: Context, dbVersion: Int, dbName: String, private val DDLs: Array<String>) :
-    SQLiteOpenHelper(context, dbName, null, dbVersion) {
-    override fun onCreate(db: SQLiteDatabase?) {
-        DDLs.forEach {
-            db?.execSQL(it)
-        }
-    }
-
-    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        TODO()
-    }
-
-    override fun onDowngrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        TODO()
-    }
-}
-
- */

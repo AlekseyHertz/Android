@@ -1,27 +1,60 @@
 package ru.netology.nmedia.repository // из PostRepositoryFileImpl
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import ru.netology.nmedia.api.PostApi
 import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.entity.PostEntity
+import ru.netology.nmedia.error.ApiError
+import ru.netology.nmedia.error.NetworkError
+import ru.netology.nmedia.error.UnknownError
+import java.io.IOException
 
 class PostRepositoryImpl(
     private val dao: PostDao
 ) : PostRepository {
-    override val data:  LiveData<List<Post>> = dao.getAll()
-        .map {
-            it.map(PostEntity::toDto)
+    override val data = dao.getAll()
+        .map { it.map(PostEntity::toDto) }
+        .flowOn(Dispatchers.Default)
+
+    override fun getNewerCount(id: Long): Flow<Int> =
+        flow {
+            while (true) {
+                try {
+                    delay(10_000)
+                    val postsResponse = PostApi.retrofitService.getNewer(id)
+                    val body = postsResponse.body().orEmpty()
+                    emit(body.size)
+                    dao.insert(body.map(PostEntity::fromDto).map {
+                        it.copy(hidden = true)
+                    })
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
         }
 
     override suspend fun getAll() {
-        val postsResponse = PostApi.retrofitService.getAll()
-        if (!postsResponse.isSuccessful) {
-            throw RuntimeException(postsResponse.errorBody()?.string())
+        try {
+            val postsResponse = PostApi.retrofitService.getAll()
+            if (!postsResponse.isSuccessful) {
+                throw RuntimeException(postsResponse.errorBody()?.string())
+            }
+            val posts = postsResponse.body() ?: throw java.lang.RuntimeException("body is null")
+            dao.insert(posts.map(PostEntity::fromDto))
+        }catch (e: IOException) {
+            throw NetworkError
+        }catch (e: Exception) {
+            throw UnknownError
         }
-        val posts = postsResponse.body() ?: throw java.lang.RuntimeException("body is null")
-        dao.insert(posts.map(PostEntity::fromDto))
     }
 
     override suspend fun getById(id: Long) {
@@ -31,14 +64,17 @@ class PostRepositoryImpl(
 
     override suspend fun save(post: Post) {
         try {
-            val postsResponse = PostApi.retrofitService.save(post)
-            if (!postsResponse.isSuccessful) {
-                throw RuntimeException(postsResponse.errorBody()?.string())
+            val response = PostApi.retrofitService.save(post)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
             }
-            val newPost = postsResponse.body() ?: throw java.lang.RuntimeException("body is null")
-            dao.insert(PostEntity.fromDto(newPost))
+
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            dao.insert(PostEntity.fromDto(body))
+        } catch (e: IOException) {
+            throw NetworkError
         } catch (e: Exception) {
-            throw Error("error")
+            throw UnknownError
         }
     }
 

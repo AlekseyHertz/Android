@@ -1,6 +1,7 @@
 package ru.netology.nmedia.viewmodel // из MainActivity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.PostFragment.Companion.postId
 import ru.netology.nmedia.R
@@ -77,7 +79,7 @@ class FeedFragment : Fragment() {
 
             override fun onLike(post: Post) {
                 //if (!post.likedByMe) {
-                    viewModel.likeById(post)
+                viewModel.likeById(post)
 //                } else {
 //                    viewModel.dislikeById(post)
 //                }
@@ -134,7 +136,8 @@ class FeedFragment : Fragment() {
                 )
             }
         }
-        viewModel.state.observe(viewLifecycleOwner) {state ->
+
+        viewModel.state.observe(viewLifecycleOwner) { state ->
 //            binding.errorGroup.isVisible = state.error
             binding.progress.isVisible = state.loading
             binding.swipeRefresh.isRefreshing = state.refreshing
@@ -147,6 +150,29 @@ class FeedFragment : Fragment() {
                     .show()
             }
         }
+
+        viewModel.newerCount.observe(viewLifecycleOwner) {
+            Log.d("FeedFragment", "Newer count: $it")
+            if (it > 0) {
+                binding.loadPost.visibility = View.VISIBLE
+                binding.loadPost.text = "Новых постов: $it"
+            } else {
+                binding.loadPost.visibility = View.GONE
+            }
+            binding.loadPost.setOnClickListener {
+                viewModel.refresh()
+                binding.loadPost.visibility = View.GONE
+            }
+        }
+
+        adapter.registerAdapterDataObserver(object : AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                if (positionStart == 0) {
+                    binding.list.smoothScrollToPosition(0)
+                }
+            }
+        })
+
         return binding.root
 
         /*viewModel.edited.observe(this) { post ->

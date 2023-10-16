@@ -19,6 +19,7 @@ data class PostEntity(
     val viewsCount: Int,
     val viewByMe: Boolean,
     val videoUrl: String? = null,
+    val hidden: Boolean = false
     //var attachment: Attachment? = null
 ) {
     fun toDto() = Post(
