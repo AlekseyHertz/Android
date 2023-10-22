@@ -1,12 +1,23 @@
 package ru.netology.nmedia.viewmodel // из NewPostActivity
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toFile
+import androidx.core.view.MenuProvider
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.github.dhaval2404.imagepicker.ImagePicker
+import com.github.dhaval2404.imagepicker.constant.ImageProvider
+import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
 import ru.netology.nmedia.repository.Helper
 
@@ -16,9 +27,34 @@ class NewPostFragment : Fragment() {
         var Bundle.textArg: String? by Helper.StringArg
     }
 
-    private val viewModel: PostViewModel by viewModels(
-        ownerProducer = ::requireParentFragment
-    )
+    private val viewModel: PostViewModel by activityViewModels()
+
+    private val photoLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+//            when (it.resultCode) {
+//                ImagePicker.RESULT_ERROR -> {
+//                    Snackbar.make(
+//                        binding.root,
+//                        ImagePicker.getError(it.data),
+//                        Snackbar.LENGTH_LONG
+//                    ).show()
+//                }
+//
+//                Activity.RESULT_OK -> {
+//                    val url: Uri? = it.data?.data
+//                    viewModel.setPhoto(uri, uri?.toFile())
+//                }
+//            }
+//
+            if (it.resultCode != Activity.RESULT_OK) {
+                return@registerForActivityResult
+            }
+
+            val uri = requireNotNull(it.data?.data)
+            val file = uri.toFile()
+
+            viewModel.setPhoto(uri, file)
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,65 +70,72 @@ class NewPostFragment : Fragment() {
         arguments?.textArg
             ?.let(binding.edit::setText)
 
-        binding.ok.setOnClickListener {
-            viewModel.changeContent(binding.edit.text.toString())
-            viewModel.save()
-            Helper.AndroidUtils.hideKeyboard(requireView())
-        //findNavController().navigateUp()
-        }
-
         viewModel.postCreated.observe(viewLifecycleOwner) {
             viewModel.loadPosts()
             findNavController().navigateUp()
         }
 
-        /*viewModel.edited.observe(viewLifecycleOwner) {
-            post ->
-            binding.edit.setText(post.content)
-            Log.d("newPostFragment", "edit")
+        requireActivity().addMenuProvider(
+            object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    menuInflater.inflate(R.menu.save_menu, menu)
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
+                    when (menuItem.itemId) {
+                        R.id.save -> {
+                            viewModel.changeContent(binding.edit.text.toString())
+                            viewModel.save()
+                            Helper.AndroidUtils.hideKeyboard(requireView())
+                            true
+                        }
+
+                        else -> false
+                    }
+            },
+            viewLifecycleOwner,
+        )
+
+        viewModel.photo.observe(viewLifecycleOwner) { photo ->
+            if (photo == null) {
+                binding.photoContainer.isVisible = true
+                return@observe
+            }
+
+            binding.photoContainer.isVisible = true
+            binding.photo.setImageURI(photo.uri)
         }
 
-         */
+        binding.gallery.setOnClickListener {
+            ImagePicker.Builder(this)
+                .crop()
+                .compress(2048)
+                .provider(ImageProvider.GALLERY)
+                .galleryMimeTypes(
+                    arrayOf(
+                        "image/png",
+                        "image/jpeg",
+                    )
+                )
+//                .galleryOnly()
+//                .maxResultSize(2048, 2048)
+                .createIntent(photoLauncher::launch)
+        }
+
+        binding.takePhoto.setOnClickListener {
+            ImagePicker.Builder(this)
+                //.galleryOnly()
+                .crop()
+                //.maxResultSize(2048, 2048)
+                .compress(2048)
+                .provider(ImageProvider.CAMERA)
+                .createIntent(photoLauncher::launch)
+        }
+
+        binding.removePhoto.setOnClickListener {
+            viewModel.clearPhoto()
+        }
 
         return binding.root
     }
 }
-/*override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    val binding = ActivityNewPostBinding.inflate(layoutInflater)
-    setContentView(binding.root)
-
-    val content = intent?.getStringExtra(Intent.EXTRA_TEXT)?:""
-    binding.content.setText(content)
-
-    val activity = this
-    activity.onBackPressedDispatcher.addCallback(
-        activity, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                setResult(AppCompatActivity.RESULT_CANCELED, intent)
-                finish()
-            }
-        }
-    )
-
-    binding.ok.setOnClickListener {
-        val text = binding.content.text.toString() //
-        if (text.isBlank()) {
-            setResult(RESULT_CANCELED)
-        } else {
-            setResult(RESULT_OK, Intent(). apply { putExtra(Intent.EXTRA_TEXT,text) })
-        }
-        finish() //
-    }
-}
-}
-
-
-/*object NewPostContract : ActivityResultContract<String?, String?>() {
-override fun createIntent(context: Context, input: String?) =
-    Intent(context, NewPostActivity::class.java).putExtra(Intent.EXTRA_TEXT, input)
-
-override fun parseResult(resultCode: Int, intent: Intent?) =
-    intent?.getStringExtra(Intent.EXTRA_TEXT)
-
-}*/

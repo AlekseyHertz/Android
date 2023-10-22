@@ -17,4 +17,9 @@
     <string name="repead">repead_a_few_time</string>
     <string name="error_download">error_download</string>
     <string name="retry">retry</string>
+    <string name="remove">remove</string>
+    <string name="description_photo" />
+    <string name="description_select_photo" />
+    <string name="description_take_photo" />
+    <string name="back" />
 </resources>

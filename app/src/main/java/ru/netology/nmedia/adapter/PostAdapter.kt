@@ -25,6 +25,7 @@ interface OnInteractionListener {
     fun abortText(post: Post) {}
     fun playVideo(post: Post) {}
     fun onPost(post: Post) {}
+    fun onImage(post: Post) {}
 }
 
 class PostAdapter(
@@ -75,10 +76,15 @@ class PostViewHolder(
                 .timeout(10_000)
                 .into(binding.typeAttachment)
 
-            if (post.attachment != null) {
-                attachmentAll.visibility = View.VISIBLE
-            } else {
-                attachmentAll.visibility = View.GONE
+            binding.typeAttachment.setOnClickListener {
+                Log.d("post", "typeAttachment")
+                if (post.attachment != null) {
+                    attachmentAll.visibility = View.VISIBLE
+                } else {
+                    attachmentAll.visibility = View.GONE
+                }
+                onInteractionListener.onImage(post)
+                //findNavController().navigate(R.id.action_postfragment_to_photoActivity)
             }
 
             like.text = convertCount(post.likes)
@@ -88,8 +94,8 @@ class PostViewHolder(
             viewsCount.text = convertCount(post.viewsCount)
             like.isChecked = post.likedByMe
             /*like.setImageResource(
-                if (post.likedByMe) R.drawable.ic_liked_24 else R.drawable.ic_like_24
-            )*/
+            if (post.likedByMe) R.drawable.ic_liked_24 else R.drawable.ic_like_24
+        )*/
 
             like.setOnClickListener {
                 like.isCheckable = !like.isCheckable
@@ -148,6 +154,7 @@ class PostViewHolder(
         }
     }
 }
+
 
 class PostDiffCallback : DiffUtil.ItemCallback<Post>() {
 

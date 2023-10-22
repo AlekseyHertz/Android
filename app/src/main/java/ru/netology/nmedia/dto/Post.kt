@@ -16,11 +16,15 @@ data class Post(
     var attachment: Attachment? = null,
     val hidden: Boolean = false,
 )
-data class Attachment (
-    val url: String = "",
-    val description: String = "",
-    val type : String = ""
+
+data class Attachment(
+    val url: String,
+    val type: AttachmentType
 )
+
+enum class AttachmentType{
+    IMAGE
+}
 
 fun convertCount(element: Int) =
     when (element) {

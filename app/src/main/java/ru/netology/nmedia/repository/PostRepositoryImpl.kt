@@ -7,13 +7,19 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import ru.netology.nmedia.api.PostApi
 import ru.netology.nmedia.dao.PostDao
+import ru.netology.nmedia.dto.Attachment
+import ru.netology.nmedia.dto.AttachmentType
+import ru.netology.nmedia.dto.Media
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.entity.PostEntity
 import ru.netology.nmedia.error.ApiError
 import ru.netology.nmedia.error.NetworkError
 import ru.netology.nmedia.error.UnknownError
+import ru.netology.nmedia.viewmodel.PhotoModel
 import java.io.IOException
 
 class PostRepositoryImpl(
@@ -50,9 +56,9 @@ class PostRepositoryImpl(
             }
             val posts = postsResponse.body() ?: throw java.lang.RuntimeException("body is null")
             dao.insert(posts.map(PostEntity::fromDto))
-        }catch (e: IOException) {
+        } catch (e: IOException) {
             throw NetworkError
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             throw UnknownError
         }
     }
@@ -76,6 +82,44 @@ class PostRepositoryImpl(
         } catch (e: Exception) {
             throw UnknownError
         }
+    }
+
+    override suspend fun saveWithAttachment(post: Post, model: PhotoModel) {
+        try {
+            val media = upload(model)
+            val response = PostApi.retrofitService.save(
+                post.copy(
+                    attachment = Attachment(
+                        url = media.id,
+                        type = AttachmentType.IMAGE
+                    )
+                )
+            )
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            dao.insert(PostEntity.fromDto(body))
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
+
+    private suspend fun upload(photoModel: PhotoModel): Media {
+        val part = MultipartBody.Part.createFormData(
+            "name",
+            photoModel.file.name,
+            photoModel.file.asRequestBody()
+        )
+
+        val response = PostApi.retrofitService.saveMedia(part)
+        if (!response.isSuccessful) {
+            throw RuntimeException(response.errorBody()?.string())
+        }
+        return requireNotNull(response.body())
     }
 
     override suspend fun removeById(id: Long) {
