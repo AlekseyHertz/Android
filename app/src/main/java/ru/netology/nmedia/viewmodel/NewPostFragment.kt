@@ -133,7 +133,7 @@ class NewPostFragment : Fragment() {
         }
 
         binding.removePhoto.setOnClickListener {
-            viewModel.clearPhoto()
+            viewModel.clearPhoto(null, null)
         }
 
         return binding.root

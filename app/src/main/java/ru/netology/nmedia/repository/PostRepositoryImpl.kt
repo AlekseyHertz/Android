@@ -14,12 +14,12 @@ import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dto.Attachment
 import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.Media
+import ru.netology.nmedia.dto.MediaUpload
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.entity.PostEntity
 import ru.netology.nmedia.error.ApiError
 import ru.netology.nmedia.error.NetworkError
 import ru.netology.nmedia.error.UnknownError
-import ru.netology.nmedia.viewmodel.PhotoModel
 import java.io.IOException
 
 class PostRepositoryImpl(
@@ -84,9 +84,9 @@ class PostRepositoryImpl(
         }
     }
 
-    override suspend fun saveWithAttachment(post: Post, model: PhotoModel) {
+    override suspend fun saveWithAttachment(post: Post, upload: MediaUpload) {
         try {
-            val media = upload(model)
+            val media = upload(upload)
             val response = PostApi.retrofitService.save(
                 post.copy(
                     attachment = Attachment(
@@ -101,6 +101,10 @@ class PostRepositoryImpl(
 
             val body = response.body() ?: throw ApiError(response.code(), response.message())
             dao.insert(PostEntity.fromDto(body))
+
+
+//            val response = post.copy(attachment = Attachment(media.id, AttachmentType.IMAGE))
+//            save(response)
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
@@ -108,18 +112,24 @@ class PostRepositoryImpl(
         }
     }
 
-    private suspend fun upload(photoModel: PhotoModel): Media {
-        val part = MultipartBody.Part.createFormData(
-            "name",
-            photoModel.file.name,
-            photoModel.file.asRequestBody()
-        )
+    private suspend fun upload(upload: MediaUpload): Media {
+        try {
+            val part = MultipartBody.Part.createFormData(
+                "name",
+                upload.file.name,
+                upload.file.asRequestBody()
+            )
 
-        val response = PostApi.retrofitService.saveMedia(part)
-        if (!response.isSuccessful) {
-            throw RuntimeException(response.errorBody()?.string())
+            val response = PostApi.retrofitService.saveMedia(part)
+            if (!response.isSuccessful) {
+                throw RuntimeException(response.errorBody()?.string())
+            }
+            return requireNotNull(response.body())
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
         }
-        return requireNotNull(response.body())
     }
 
     override suspend fun removeById(id: Long) {
