@@ -1,4 +1,4 @@
-package ru.netology.nmedia //
+package ru.netology.nmedia.activity //
 
 import android.os.Bundle
 import android.util.Log
@@ -9,16 +9,17 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostViewHolder
 import ru.netology.nmedia.databinding.FragmentPostBinding
 import ru.netology.nmedia.dto.Post
-import ru.netology.nmedia.repository.Helper
+import ru.netology.nmedia.util.AndroidUtil
 import ru.netology.nmedia.viewmodel.PostViewModel
 
 class PostFragment() : Fragment() {
     companion object {
-        var Bundle.postId by Helper.LongArg
+        var Bundle.postId by AndroidUtil.LongArg
     }
 
     override fun onCreateView(

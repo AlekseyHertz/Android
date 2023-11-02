@@ -1,4 +1,4 @@
-package ru.netology.nmedia
+package ru.netology.nmedia.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import ru.netology.nmedia.BuildConfig
 import ru.netology.nmedia.databinding.ActivityPhotoBinding
+import ru.netology.nmedia.util.AndroidUtil.glideDownloadAttachUrl
 
 class PhotoActivity : Fragment() {
     override fun onCreateView(
@@ -15,9 +17,17 @@ class PhotoActivity : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = ActivityPhotoBinding.inflate(inflater, container, false)
+        val binding = ActivityPhotoBinding.inflate(
+            inflater,
+            container,
+            false
+        )
 
-
+        val serverPathUrl = "${BuildConfig.BASE_URL}"
+        val attachmentsUrl = "${serverPathUrl}/media"
+        val attachmentUrl = arguments?.getString("attachUrl")
+        val downloadAttachUrl = "${attachmentsUrl}/${attachmentUrl}"
+        glideDownloadAttachUrl(downloadAttachUrl,binding.photoPic)
         binding.photoPic.setOnClickListener {
             Intent.ACTION_VIEW
         }

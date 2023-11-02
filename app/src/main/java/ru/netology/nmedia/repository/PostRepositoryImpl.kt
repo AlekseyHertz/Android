@@ -101,8 +101,6 @@ class PostRepositoryImpl(
 
             val body = response.body() ?: throw ApiError(response.code(), response.message())
             dao.insert(PostEntity.fromDto(body))
-
-
 //            val response = post.copy(attachment = Attachment(media.id, AttachmentType.IMAGE))
 //            save(response)
         } catch (e: IOException) {
@@ -115,7 +113,7 @@ class PostRepositoryImpl(
     private suspend fun upload(upload: MediaUpload): Media {
         try {
             val part = MultipartBody.Part.createFormData(
-                "name",
+                "file",
                 upload.file.name,
                 upload.file.asRequestBody()
             )

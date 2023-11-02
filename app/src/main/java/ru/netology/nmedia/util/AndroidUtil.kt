@@ -1,13 +1,16 @@
-package ru.netology.nmedia.repository
+package ru.netology.nmedia.util
 
 import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
+import com.bumptech.glide.Glide
+import ru.netology.nmedia.R
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-object Helper {
+object AndroidUtil {
 
     object AndroidUtils {
         fun hideKeyboard(view: View) {
@@ -33,5 +36,16 @@ object Helper {
 
         override fun getValue(thisRef: Bundle, property: KProperty<*>): Long =
             thisRef.getLong(property.name)
+    }
+
+    fun glideDownloadAttachUrl (url:String, view: View)  {
+        Glide.with(view)
+            .load(url)
+            .error(R.drawable.ic_error_24)
+            .fitCenter()
+            .centerCrop()
+            .centerInside()
+            .timeout(10_000)
+            .into(view as ImageView)
     }
 }

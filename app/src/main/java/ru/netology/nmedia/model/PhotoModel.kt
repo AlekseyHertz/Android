@@ -1,4 +1,4 @@
-package ru.netology.nmedia.viewmodel
+package ru.netology.nmedia.model
 
 import android.net.Uri
 import java.io.File

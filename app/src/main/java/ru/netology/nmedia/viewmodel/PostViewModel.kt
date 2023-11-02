@@ -17,9 +17,10 @@ import ru.netology.nmedia.dto.MediaUpload
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.model.FeedModelState
+import ru.netology.nmedia.model.PhotoModel
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
-import ru.netology.nmedia.repository.SingleLiveEvent
+import ru.netology.nmedia.util.SingleLiveEvent
 import java.io.File
 
 private val empty = Post(

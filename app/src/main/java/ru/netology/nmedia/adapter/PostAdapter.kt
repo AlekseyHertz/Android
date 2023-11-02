@@ -70,7 +70,7 @@ class PostViewHolder(
                 .into(binding.avatar)
 
             Glide.with(typeAttachment)
-                .load("${glideDownloadUrl}images/${post.attachment?.url}")
+                .load("${glideDownloadUrl}media/${post.attachment?.url}")
                 .placeholder(R.drawable.ic_download_24)
                 .error(R.drawable.ic_error_24)
                 .timeout(10_000)

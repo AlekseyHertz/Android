@@ -1,4 +1,4 @@
-package ru.netology.nmedia.viewmodel // из MainActivity
+package ru.netology.nmedia.activity // из MainActivity
 
 import android.os.Bundle
 import android.util.Log
@@ -12,13 +12,14 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import com.google.android.material.snackbar.Snackbar
-import ru.netology.nmedia.PostFragment.Companion.postId
+import ru.netology.nmedia.activity.PostFragment.Companion.postId
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostAdapter
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
-import ru.netology.nmedia.viewmodel.NewPostFragment.Companion.textArg
+import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
+import ru.netology.nmedia.viewmodel.PostViewModel
 
 class FeedFragment : Fragment() {
 
@@ -98,6 +99,15 @@ class FeedFragment : Fragment() {
                     R.id.action_feedFragment_to_postFragment,
                     Bundle().apply {
                         postId = post.id
+                    }
+                )
+            }
+
+            override fun onImage(post: Post) {
+                findNavController().navigate(
+                    R.id.action_feedFragment_to_photoActivity,
+                    Bundle().apply {
+                        putString("attachUrl", post.attachment?.url)
                     }
                 )
             }

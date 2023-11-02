@@ -1,4 +1,4 @@
-package ru.netology.nmedia.viewmodel // из NewPostActivity
+package ru.netology.nmedia.activity // из NewPostActivity
 
 import android.app.Activity
 import android.os.Bundle
@@ -19,12 +19,13 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
-import ru.netology.nmedia.repository.Helper
+import ru.netology.nmedia.util.AndroidUtil
+import ru.netology.nmedia.viewmodel.PostViewModel
 
 class NewPostFragment : Fragment() {
 
     companion object {
-        var Bundle.textArg: String? by Helper.StringArg
+        var Bundle.textArg: String? by AndroidUtil.StringArg
     }
 
     private val viewModel: PostViewModel by activityViewModels()
@@ -86,7 +87,7 @@ class NewPostFragment : Fragment() {
                         R.id.save -> {
                             viewModel.changeContent(binding.edit.text.toString())
                             viewModel.save()
-                            Helper.AndroidUtils.hideKeyboard(requireView())
+                            AndroidUtil.AndroidUtils.hideKeyboard(requireView())
                             true
                         }
 
