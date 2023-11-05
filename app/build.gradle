@@ -71,6 +71,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3"
     implementation "androidx.room:room-ktx:2.5.2"
     implementation 'com.google.android.gms:play-services-cast-framework:21.3.0'
+    implementation 'com.google.firebase:firebase-messaging-ktx:23.2.1'
     annotationProcessor "com.github.bumptech.glide:compiler:4.14.2"
     kapt "androidx.room:room-compiler:2.5.2"
     implementation "com.squareup.okhttp3:okhttp:4.11.0"

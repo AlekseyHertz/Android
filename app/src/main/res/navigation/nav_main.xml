@@ -51,7 +51,7 @@
         android:name="ru.netology.nmedia.activity.NewPostFragment"
         android:label="fragment_new_post"
         tools:layout="@layout/fragment_new_post" />
-    <activity
+    <fragment
         android:id="@+id/photoActivity"
         android:name="ru.netology.nmedia.activity.PhotoActivity"
         android:label="activity_photo"

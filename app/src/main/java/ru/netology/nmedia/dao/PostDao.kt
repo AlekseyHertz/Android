@@ -67,3 +67,12 @@ interface PostDao {
     )
     suspend fun sharedById(id: Long)
 }
+
+/*class Converters {
+    @TypeConverter
+    fun toAttachmentType(value: String) = enumValueOf<AttachmentType>(value)
+    @TypeConverter
+    fun fromAttachmentType(value: AttachmentType) = value.name
+}
+
+ */

@@ -10,7 +10,12 @@
     <string name="description_post_views">Просмотры</string>
     <string name="post_text">Текст поста</string>
     <string name="like">Лайк</string>
+    <string name="channel_remote_name">Уведомления с сервера</string>
+    <string name="channel_remote_description">Уведомления с удалённого сервера</string>
     <string name="chooser_share_post">Выбери</string>
     <string name="error_empty_content">Ошибка</string>
     <string name="add_post">Добавить</string>
+    <string name="notification_user_liked">%1$s поставил лайк посту %2$s</string>
+    <string name="back">Назад к постам </string>
+
 </resources>

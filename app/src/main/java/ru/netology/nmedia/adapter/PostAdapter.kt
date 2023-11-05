@@ -69,7 +69,7 @@ class PostViewHolder(
                 .circleCrop()
                 .into(binding.avatar)
 
-            Glide.with(typeAttachment)
+            Glide.with(binding.typeAttachment)
                 .load("${glideDownloadUrl}media/${post.attachment?.url}")
                 .placeholder(R.drawable.ic_download_24)
                 .error(R.drawable.ic_error_24)
@@ -78,13 +78,14 @@ class PostViewHolder(
 
             binding.typeAttachment.setOnClickListener {
                 Log.d("post", "typeAttachment")
-                if (post.attachment != null) {
-                    attachmentAll.visibility = View.VISIBLE
-                } else {
-                    attachmentAll.visibility = View.GONE
-                }
                 onInteractionListener.onImage(post)
                 //findNavController().navigate(R.id.action_postfragment_to_photoActivity)
+            }
+
+            if (post.attachment != null) {
+                attachmentAll.visibility = View.VISIBLE
+            } else {
+                attachmentAll.visibility = View.GONE
             }
 
             like.text = convertCount(post.likes)

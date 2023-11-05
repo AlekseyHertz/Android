@@ -101,8 +101,9 @@ class PostRepositoryImpl(
 
             val body = response.body() ?: throw ApiError(response.code(), response.message())
             dao.insert(PostEntity.fromDto(body))
-//            val response = post.copy(attachment = Attachment(media.id, AttachmentType.IMAGE))
-//            save(response)
+            /*val media = upload(upload)
+            val postWithAttachment = post.copy(attachment = Attachment(media.id, AttachmentType.IMAGE))
+            save(postWithAttachment)*/
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
@@ -112,17 +113,18 @@ class PostRepositoryImpl(
 
     private suspend fun upload(upload: MediaUpload): Media {
         try {
-            val part = MultipartBody.Part.createFormData(
+            val media = MultipartBody.Part.createFormData(
                 "file",
                 upload.file.name,
                 upload.file.asRequestBody()
             )
 
-            val response = PostApi.retrofitService.saveMedia(part)
+            val response = PostApi.retrofitService.saveMedia(media)
             if (!response.isSuccessful) {
-                throw RuntimeException(response.errorBody()?.string())
+                throw ApiError(response.code(), response.message())
             }
-            return requireNotNull(response.body())
+
+            return response.body() ?: throw ApiError(response.code(), response.message())
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {

@@ -30,6 +30,8 @@ class NewPostFragment : Fragment() {
 
     private val viewModel: PostViewModel by activityViewModels()
 
+    private var fragmentBinding: FragmentNewPostBinding? = null
+
     private val photoLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
 //            when (it.resultCode) {
@@ -139,4 +141,9 @@ class NewPostFragment : Fragment() {
 
         return binding.root
     }
+
+    /*override fun onDestroyView() {
+        fragmentBinding = null
+        super.onDestroyView()
+    }*/
 }
