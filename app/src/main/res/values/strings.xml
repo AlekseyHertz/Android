@@ -25,5 +25,14 @@
     <string name="channel_remote_name">Server notifications</string>
     <string name="channel_remote_description">Notifications from remote server</string>
     <string name="notification_user_liked">User %1$s liked %2$s\'s post</string>
+    <string name="logout"> logout</string>
+    <string name="auth"> auth </string>
+    <string name="register"> register </string>
+    <string name="sign_In">sign In</string>
+    <string name="input_you_re_pass">input you\'re password</string>
+    <string name="input_you_re_login">input you\'re login</string>
+    <string name="noLogin"> login is absent in base </string>
+    <string name="back_posts">back to posts</string>
+    <string name="login">login</string>
 
 </resources>

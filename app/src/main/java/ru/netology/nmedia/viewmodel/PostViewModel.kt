@@ -10,8 +10,10 @@ import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.MediaUpload
 import ru.netology.nmedia.dto.Post
@@ -25,6 +27,7 @@ import java.io.File
 
 private val empty = Post(
     id = 0,
+    authorId = 0,
     content = "",
     author = "",
     authorAvatar = "",
@@ -46,8 +49,16 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         PostRepositoryImpl(AppDb.getInstance(context = application).postDao())
 
     //private val repository: PostRepository = PostRepositoryFileImpl(application)
-    val data: LiveData<FeedModel> = repository.data
-        .map(::FeedModel)
+    val data: LiveData<FeedModel> = AppAuth.getInstance().authFlow
+        .flatMapLatest { token ->
+            repository.data
+                .map { posts ->
+                    FeedModel(posts.map {
+                        it.copy(ownerByMe = it.authorId == token?.id)
+                    },
+                    posts.isEmpty())
+                }
+        }
         .asLiveData(Dispatchers.Default)
 
     val newerCount: LiveData<Int> = data.switchMap {
@@ -159,7 +170,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             _postCreated.value = Unit
             viewModelScope.launch {
                 try {
-                    when(_photo.value) {
+                    when (_photo.value) {
                         noPhoto -> repository.save(it)
                         else -> _photo.value?.file?.let { file ->
                             repository.saveWithAttachment(it, MediaUpload(file))

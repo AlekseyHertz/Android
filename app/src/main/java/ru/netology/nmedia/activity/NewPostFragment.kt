@@ -92,7 +92,6 @@ class NewPostFragment : Fragment() {
                             AndroidUtil.AndroidUtils.hideKeyboard(requireView())
                             true
                         }
-
                         else -> false
                     }
             },

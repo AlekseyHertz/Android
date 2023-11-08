@@ -17,5 +17,8 @@
     <string name="add_post">Добавить</string>
     <string name="notification_user_liked">%1$s поставил лайк посту %2$s</string>
     <string name="back">Назад к постам </string>
+    <string name="logout"> выйти </string>
+    <string name="auth"> аутентификация </string>
+    <string name="register"> регистрация </string>
 
 </resources>

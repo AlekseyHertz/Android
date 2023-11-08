@@ -5,20 +5,28 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.MenuProvider
 import androidx.navigation.findNavController
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_INDEFINITE
 import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.R
-import ru.netology.nmedia.databinding.ActivityAppBinding
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
+import ru.netology.nmedia.auth.AppAuth
+import ru.netology.nmedia.databinding.ActivityAppBinding
+import ru.netology.nmedia.viewmodel.AuthViewModel
 
 class AppActivity : AppCompatActivity(/*R.layout.activity_app*/) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestNotificationPermission()
-        val binding = ActivityAppBinding.inflate(layoutInflater)//by lazy { ActivityAppBinding.inflate(layoutInflater) }
+        val binding =
+            ActivityAppBinding.inflate(layoutInflater)//by lazy { ActivityAppBinding.inflate(layoutInflater) }
 
         /*supportFragmentManager.commit {
             add(R.id.nav_host_fragment, FeedFragment())
@@ -42,11 +50,51 @@ class AppActivity : AppCompatActivity(/*R.layout.activity_app*/) {
             findNavController(R.id.nav_host_fragment)
                 .navigate(
                     R.id.action_feedFragment_to_newPostFragment,
-                Bundle().apply {
-                    textArg = text
-                }
+                    Bundle().apply {
+                        textArg = text
+                    }
+                )
+        }
+        val authViewModel by viewModels<AuthViewModel>()
+        var currentMenuProvider: MenuProvider? = null
+        authViewModel.state.observe(this) {
+            currentMenuProvider?.let(::removeMenuProvider)
+
+            addMenuProvider(
+                object : MenuProvider {
+                    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                        menuInflater.inflate(R.menu.auth_menu, menu)
+                        menu.setGroupVisible(R.id.registered, authViewModel.authorized)
+                        menu.setGroupVisible(R.id.unregistered, !authViewModel.authorized)
+                    }
+
+                    override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
+                        when (menuItem.itemId) {
+                            R.id.login -> {
+                                findNavController(R.id.nav_host_fragment)
+                                    .navigate(R.id.action_feedFragment_to_fragment_auth)
+                                //AppAuth.getInstance().setAuth(Token(5L, "x-token"))
+                                true
+                            }
+
+                            R.id.logout -> {
+                                AppAuth.getInstance().clear()
+                                true
+                            }
+
+//                            R.id.registration -> {
+//                                findNavController(R.id.string.registration)
+//                            }
+
+                            else -> false
+                        }
+
+                }.also {
+                    currentMenuProvider = it
+                }, this
             )
         }
+        //checkGoogleApiAvailability()
     }
 
     private fun requestNotificationPermission() {

@@ -28,7 +28,20 @@
             app:popExitAnim="@android:anim/fade_out" />
         <action
             android:id="@+id/action_feedFragment_to_photoActivity"
-            app:destination="@id/photoActivity" />
+            app:destination="@id/photoActivity"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"/>
+
+        <action
+            android:id="@+id/action_feedFragment_to_fragment_auth"
+            app:destination="@+id/fragment_auth"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"/>
+
 
     </fragment>
     <fragment
@@ -56,5 +69,10 @@
         android:name="ru.netology.nmedia.activity.PhotoActivity"
         android:label="activity_photo"
         tools:layout="@layout/activity_photo" />
+    <fragment
+        android:id="@+id/fragment_auth"
+        android:name="ru.netology.nmedia.activity.FragmentAuth"
+        android:label="fragment_auth"
+        tools:layout="@layout/fragment_auth" />
 
 </navigation>
