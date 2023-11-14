@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import ru.netology.nmedia.api.glideDownloadUrl
+import ru.netology.nmedia.BuildConfig.BASE_URL
 import ru.netology.nmedia.databinding.ActivityPhotoBinding
 import ru.netology.nmedia.util.AndroidUtil.glideDownloadAttachUrl
 
@@ -23,7 +23,7 @@ class PhotoActivity : Fragment() {
             false
         )
 
-        val serverPathUrl = "${glideDownloadUrl}"
+        val serverPathUrl = "${BASE_URL}"
         val attachmentsUrl = "${serverPathUrl}/media"
         val attachmentUrl = arguments?.getString("attachUrl")
         val downloadAttachUrl = "${attachmentsUrl}/${attachmentUrl}"

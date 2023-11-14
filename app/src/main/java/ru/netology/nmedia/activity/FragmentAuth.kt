@@ -5,13 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentAuthBinding
 import ru.netology.nmedia.util.AndroidUtil
-import ru.netology.nmedia.viewmodel.AuthViewModel
+import ru.netology.nmedia.vi.AuthViewModel
 import ru.netology.nmedia.viewmodel.LoginViewModel
 
 class FragmentAuth : Fragment() {
@@ -26,12 +27,10 @@ class FragmentAuth : Fragment() {
             container,
             false
         )
-        val loginViewModel: LoginViewModel by viewModels(
-            ownerProducer = ::requireParentFragment
-        )
+        val loginViewModel: LoginViewModel by activityViewModels()
 
         binding.sighInAuth.setOnClickListener {
-            val accountName = binding.username.text.toString()
+            val accountName = binding.username.toString()
             val accountPassword = binding.password.text.toString()
 
             if (accountName.isBlank() || accountPassword.isBlank()) {
@@ -41,7 +40,7 @@ class FragmentAuth : Fragment() {
             }
 
             loginViewModel.signLogin(username = accountName, password = accountPassword)
-            authViewModel.state.observe(viewLifecycleOwner) {
+            authViewModel.data.observe(viewLifecycleOwner) {
                 if (authViewModel.authorized) {
                     findNavController().navigateUp()
                 }

@@ -12,6 +12,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.activity.PostFragment.Companion.postId
@@ -21,33 +22,10 @@ import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.viewmodel.PostViewModel
 
+@AndroidEntryPoint
 class FeedFragment : Fragment() {
-
     private val viewModel: PostViewModel by activityViewModels()
-//        ownerProducer = ::requireParentFragment)
-//    private val viewModel2: PostViewModel by activityViewModels()
 
-    /*val newPostLauncher = registerForActivityResult(NewPostContract) { text ->
-        text?: return@registerForActivityResult
-        viewModel.changeContent(text.toString())
-        viewModel.save()
-    }
-
-    val interaction: OnInteractionListener = object : OnInteractionListener {
-
-
-        override fun onView(post: Post) {
-            viewModel.viewById(post.id)
-        }
-
-        override fun abortText(post: Post) {
-            viewModel.abortText()
-        }
-
-        override fun save(post: Post) {
-            viewModel.save()
-        }
-    }*/
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -71,24 +49,9 @@ class FeedFragment : Fragment() {
                 )
             }
 
-            /*override fun playVideo(post: Post) {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.videoUrl))
-                startActivity(intent)
-            }
-
-             */
-
             override fun onLike(post: Post) {
-                //if (!post.likedByMe) {
                 viewModel.likeById(post)
-//                } else {
-//                    viewModel.dislikeById(post)
-//                }
             }
-
-            /*override fun onView(post: Post) {
-                viewModel.viewById(post.id)
-            }*/
 
             override fun onRemove(post: Post) {
                 viewModel.removeById(post.id)
@@ -111,22 +74,6 @@ class FeedFragment : Fragment() {
                     }
                 )
             }
-
-            /*override fun onShare(post: Post) {
-                    viewModel.shareById(post.id)
-                    val intent = Intent().apply {
-                        action = Intent.ACTION_SEND
-                        putExtra(Intent.EXTRA_TEXT, post.content)
-                        type = "text/plain"
-                    }*/
-            /*val shareIntent =
-                Intent.createChooser(intent, getString(R.string.chooser_share_post))
-            startActivity(shareIntent)
-
-            val chooser = Intent.createChooser(intent, getString(R.string.chooser_share_post))
-            startActivity(chooser)
-             */
-
         })
 
         binding.list.adapter = adapter
@@ -184,44 +131,5 @@ class FeedFragment : Fragment() {
         })
 
         return binding.root
-
-        /*viewModel.edited.observe(this) { post ->
-            if (post.id == 0L) {
-                return@observe
-            }
-            with(binding.content) {
-                requestFocus()
-                setText(post.content)
-            }
-        }
-
-        binding.save.setOnClickListener {
-            with(binding.content) {
-                if (text.isNullOrBlank()) {
-                    Toast.makeText(
-                        this@MainActivity,
-                        "Content can't be empty",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return@setOnClickListener
-                }
-
-                viewModel.changeContent(text.toString())
-                viewModel.save()
-
-                setText("")
-                clearFocus()
-                AndroidUtils.hideKeyboard(this)
-            }
-        }
-
-        binding.abortText.setOnClickListener {
-            binding.content.setText("")
-            viewModel.abortText()
-        }
-
-        binding.content.doOnTextChanged { _, _, _, count ->
-            binding.abortText.isVisible = count != 0
-        }*/
     }
 }

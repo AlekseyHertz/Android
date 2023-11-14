@@ -14,13 +14,21 @@ import androidx.core.view.MenuProvider
 import androidx.navigation.findNavController
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_INDEFINITE
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.ActivityAppBinding
-import ru.netology.nmedia.viewmodel.AuthViewModel
+import ru.netology.nmedia.vi.AuthViewModel
+import javax.inject.Inject
 
-class AppActivity : AppCompatActivity(/*R.layout.activity_app*/) {
+@AndroidEntryPoint
+class AppActivity : AppCompatActivity(){//R.layout.activity_app) {
+
+    @Inject
+    lateinit var appAuth: AppAuth
+
+    private val viewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +65,7 @@ class AppActivity : AppCompatActivity(/*R.layout.activity_app*/) {
         }
         val authViewModel by viewModels<AuthViewModel>()
         var currentMenuProvider: MenuProvider? = null
-        authViewModel.state.observe(this) {
+        authViewModel.data.observe(this) {
             currentMenuProvider?.let(::removeMenuProvider)
 
             addMenuProvider(
@@ -73,12 +81,12 @@ class AppActivity : AppCompatActivity(/*R.layout.activity_app*/) {
                             R.id.login -> {
                                 findNavController(R.id.nav_host_fragment)
                                     .navigate(R.id.action_feedFragment_to_fragment_auth)
-                                //AppAuth.getInstance().setAuth(Token(5L, "x-token"))
+                                //dependencyContainer.appAuth.setAuth(Token(5L, "x-token"))
                                 true
                             }
 
                             R.id.logout -> {
-                                AppAuth.getInstance().clear()
+                                appAuth.clear()
                                 true
                             }
 

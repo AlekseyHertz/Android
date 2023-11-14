@@ -1,8 +1,6 @@
 package ru.netology.nmedia.db
 
-import android.content.Context
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
 import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.entity.PostEntity
@@ -11,7 +9,7 @@ import ru.netology.nmedia.entity.PostEntity
 abstract class AppDb : RoomDatabase() {
     abstract fun postDao(): PostDao
 
-    companion object {
+    /*companion object {
         @Volatile
         private var instance: AppDb? = null
 
@@ -26,5 +24,5 @@ abstract class AppDb : RoomDatabase() {
 //                .allowMainThreadQueries() // разрешить сохраняться на главном потоке
                 .fallbackToDestructiveMigration()
                 .build()
-    }
+    }*/
 }

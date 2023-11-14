@@ -13,42 +13,29 @@ import androidx.core.net.toFile
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.constant.ImageProvider
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
 import ru.netology.nmedia.util.AndroidUtil
 import ru.netology.nmedia.viewmodel.PostViewModel
 
+@AndroidEntryPoint
 class NewPostFragment : Fragment() {
 
     companion object {
         var Bundle.textArg: String? by AndroidUtil.StringArg
     }
 
-    private val viewModel: PostViewModel by activityViewModels()
+    private val viewModel: PostViewModel by viewModels()
 
     private var fragmentBinding: FragmentNewPostBinding? = null
 
     private val photoLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-//            when (it.resultCode) {
-//                ImagePicker.RESULT_ERROR -> {
-//                    Snackbar.make(
-//                        binding.root,
-//                        ImagePicker.getError(it.data),
-//                        Snackbar.LENGTH_LONG
-//                    ).show()
-//                }
-//
-//                Activity.RESULT_OK -> {
-//                    val url: Uri? = it.data?.data
-//                    viewModel.setPhoto(uri, uri?.toFile())
-//                }
-//            }
-//
             if (it.resultCode != Activity.RESULT_OK) {
                 return@registerForActivityResult
             }
@@ -119,16 +106,12 @@ class NewPostFragment : Fragment() {
                         "image/jpeg",
                     )
                 )
-//                .galleryOnly()
-//                .maxResultSize(2048, 2048)
                 .createIntent(photoLauncher::launch)
         }
 
         binding.takePhoto.setOnClickListener {
             ImagePicker.Builder(this)
-                //.galleryOnly()
                 .crop()
-                //.maxResultSize(2048, 2048)
                 .compress(2048)
                 .provider(ImageProvider.CAMERA)
                 .createIntent(photoLauncher::launch)
@@ -140,9 +123,4 @@ class NewPostFragment : Fragment() {
 
         return binding.root
     }
-
-    /*override fun onDestroyView() {
-        fragmentBinding = null
-        super.onDestroyView()
-    }*/
 }
