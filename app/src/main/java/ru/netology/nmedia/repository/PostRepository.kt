@@ -9,8 +9,8 @@ interface PostRepository {
     fun getNewerCount (id: Long): Flow<Int>
     suspend fun getAll()
     suspend fun getById(id: Long)
-    suspend fun save(post: Post)
-    suspend fun saveWithAttachment(post: Post, upload: MediaUpload)
+    suspend fun save(post: Post, upload: MediaUpload?)
+    //suspend fun saveWithAttachment(post: Post, upload: MediaUpload)
     suspend fun removeById(id: Long)
     suspend fun likeById(post: Post)
     suspend fun unLikeById(post: Post)

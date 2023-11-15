@@ -1,6 +1,7 @@
 package ru.netology.nmedia.viewmodel
 
 import android.net.Uri
+import androidx.core.net.toFile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -164,6 +165,24 @@ class PostViewModel @Inject constructor(
 
     fun save() {
         edited.value?.let {
+            viewModelScope.launch {
+                try {
+                    repository.save(
+                        it, _photo.value?.uri?.let { MediaUpload(it.toFile()) }
+                    )
+
+                    _postCreated.value = Unit
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+        edited.value = empty
+        _photo.value = noPhoto
+    }
+
+    /*fun save() {
+        edited.value?.let {
             _postCreated.value = Unit
             viewModelScope.launch {
                 try {
@@ -181,7 +200,8 @@ class PostViewModel @Inject constructor(
         }
         edited.value = empty
         _photo.value = noPhoto
-    }
+    }*/
+
 
     fun changeContent(content: String) {
         edited.value?.let {

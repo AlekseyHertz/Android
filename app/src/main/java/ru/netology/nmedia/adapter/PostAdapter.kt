@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import ru.netology.nmedia.BuildConfig.BASE_URL
 import ru.netology.nmedia.R
+import ru.netology.nmedia.api.ApiModule.Companion.glideDownload
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.dto.convertCount
@@ -63,7 +63,7 @@ class PostViewHolder(
             }
 
             Glide.with(binding.avatar)
-                .load("${BASE_URL}avatars/${post.authorAvatar}")
+                .load("${glideDownload}avatars/${post.authorAvatar}")
                 .placeholder(R.drawable.ic_download_24)
                 .error(R.drawable.ic_error_24)
                 .timeout(10_000)
@@ -71,7 +71,7 @@ class PostViewHolder(
                 .into(binding.avatar)
 
             Glide.with(binding.typeAttachment)
-                .load("${BASE_URL}media/${post.attachment?.url}")
+                .load("${glideDownload}media/${post.attachment?.url}")
                 .placeholder(R.drawable.ic_download_24)
                 .error(R.drawable.ic_error_24)
                 .timeout(10_000)

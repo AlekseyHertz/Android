@@ -34,5 +34,6 @@
     <string name="noLogin"> login is absent in base </string>
     <string name="back_posts">back to posts</string>
     <string name="login">login</string>
+    <string name="google_play_unavailable">Google Api Unavailable</string>
 
 </resources>

@@ -19,7 +19,7 @@ import javax.inject.Inject
 import kotlin.random.Random
 
 @AndroidEntryPoint
-class FCMService : FirebaseMessagingService() {
+class FCMService @Inject constructor(): FirebaseMessagingService() {
     private val action = "action"
     private val content = "content"
     private val channelId = "remote"

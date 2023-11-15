@@ -28,7 +28,7 @@ interface PostsApiService {
     suspend fun getById(@Path("id") id: Long): Response<Post>
 
     @POST("posts")
-    suspend fun save(@Body post: Post): Response<Unit>
+    suspend fun save(@Body post: Post): Response<Post>
 
     @DELETE("posts/{id}")
     suspend fun removeById(@Path("id") id: Long): Response<Unit>

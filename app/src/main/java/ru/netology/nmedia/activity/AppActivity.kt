@@ -8,12 +8,16 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
 import androidx.navigation.findNavController
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_INDEFINITE
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
@@ -23,12 +27,20 @@ import ru.netology.nmedia.vi.AuthViewModel
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AppActivity : AppCompatActivity(){//R.layout.activity_app) {
+class AppActivity @Inject constructor(
+    private val appAuth: AppAuth,
+//    private val fbmApp: FirebaseMessaging,
+//    private val googleApi: GoogleApiAvailability,
+) : AppCompatActivity() {//R.layout.activity_app) {
 
     @Inject
-    lateinit var appAuth: AppAuth
+    lateinit var fbmApp: FirebaseMessaging
 
-    private val viewModel: AuthViewModel by viewModels()
+    @Inject
+    lateinit var googleApi: GoogleApiAvailability
+
+
+    //private val viewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,6 +91,7 @@ class AppActivity : AppCompatActivity(){//R.layout.activity_app) {
                     override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
                         when (menuItem.itemId) {
                             R.id.login -> {
+                                appAuth.setAuth(5, "x-token")
                                 findNavController(R.id.nav_host_fragment)
                                     .navigate(R.id.action_feedFragment_to_fragment_auth)
                                 //dependencyContainer.appAuth.setAuth(Token(5L, "x-token"))
@@ -101,8 +114,19 @@ class AppActivity : AppCompatActivity(){//R.layout.activity_app) {
                     currentMenuProvider = it
                 }, this
             )
+
+            fbmApp.token.addOnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    println("some stuff happened: ${task.exception}")
+                    return@addOnCompleteListener
+                }
+
+                val token = task.result
+                println(token)
+            }
+
+            checkGoogleApiAvailability()
         }
-        //checkGoogleApiAvailability()
     }
 
     private fun requestNotificationPermission() {
@@ -114,5 +138,20 @@ class AppActivity : AppCompatActivity(){//R.layout.activity_app) {
             return
         }
         requestPermissions(arrayOf(permission), 1)
+    }
+
+    private fun checkGoogleApiAvailability() {
+        with(googleApi) {
+            val code = isGooglePlayServicesAvailable(this@AppActivity)
+            if (code == ConnectionResult.SUCCESS) {
+                return@with
+            }
+            if (isUserResolvableError(code)) {
+                getErrorDialog(this@AppActivity, code, 9000)?.show()
+                return
+            }
+            Toast.makeText(this@AppActivity, R.string.google_play_unavailable, Toast.LENGTH_LONG)
+                .show()
+        }
     }
 }

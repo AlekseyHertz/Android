@@ -20,5 +20,6 @@
     <string name="logout"> выйти </string>
     <string name="auth"> аутентификация </string>
     <string name="register"> регистрация </string>
+    <string name="google_play_unavailable">Google Api Недоступно</string>
 
 </resources>
