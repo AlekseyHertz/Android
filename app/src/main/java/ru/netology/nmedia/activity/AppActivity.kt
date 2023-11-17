@@ -27,11 +27,10 @@ import ru.netology.nmedia.vi.AuthViewModel
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AppActivity @Inject constructor(
-    private val appAuth: AppAuth,
-//    private val fbmApp: FirebaseMessaging,
-//    private val googleApi: GoogleApiAvailability,
-) : AppCompatActivity() {//R.layout.activity_app) {
+class AppActivity : AppCompatActivity() {
+    //R.layout.activity_app) {
+    @Inject
+    lateinit var appAuth: AppAuth
 
     @Inject
     lateinit var fbmApp: FirebaseMessaging
