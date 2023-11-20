@@ -15,36 +15,40 @@ import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor (
+class LoginViewModel @Inject constructor(
     private val appAuth: AppAuth,
     private val apiService: PostsApiService,
-        ) : ViewModel() {
+) : ViewModel() {
     private val _dataState = MutableLiveData<FeedModelState>()
     val dataState: LiveData<FeedModelState>
         get() = _dataState
 
-    suspend fun login(username: String, password: String): Token {
-        try {
-            val response = apiService.updateUser(username, password)
-            if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
-            }
-            val token = response.body() ?: throw ApiError(response.code(), response.message())
-            return token
+    private suspend fun login(login: String, password: String): Token {
+        val response = try {
+            apiService.updateUser(login, password)
         } catch (e: Exception) {
             throw Error("unknown exception")
         } catch (e: IOException) {
             throw Error("Network exception")
         }
+        if (!response.isSuccessful) {
+            throw ApiError(response.code(), response.message())
+        }
+        return response.body() ?: throw ApiError(
+            status = response.code(),
+            code = response.message()
+        )
     }
 
-    fun signLogin(username: String, password: String) {
+    fun signLogin(login: String, password: String) {
         viewModelScope.launch {
             try {
-                val result = login(username, password)
+                val result = login (login, password)
                 appAuth.setAuth(result.id, result.token)
-            } catch (e: Exception) {
+            } catch (e: ApiError) {
                 _dataState.value = FeedModelState(error = true)
+            } catch (e :Exception) {
+                throw Error("unknown exception")
             }
         }
     }

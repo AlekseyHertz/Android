@@ -90,21 +90,24 @@ class AppActivity : AppCompatActivity() {
                     override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
                         when (menuItem.itemId) {
                             R.id.login -> {
-                                appAuth.setAuth(5, "x-token")
                                 findNavController(R.id.nav_host_fragment)
                                     .navigate(R.id.action_feedFragment_to_fragment_auth)
                                 //dependencyContainer.appAuth.setAuth(Token(5L, "x-token"))
+                                appAuth.setAuth(5, "x-token")
                                 true
                             }
 
                             R.id.logout -> {
-                                appAuth.clear()
+                                appAuth.removeAuth()
                                 true
                             }
 
-//                            R.id.registration -> {
-//                                findNavController(R.id.string.registration)
-//                            }
+                            R.id.registration -> {
+                                findNavController(R.id.action_feedFragment_to_registrationFragment)
+                                //reg.tryRegistration("","","")
+                                    //.navigate(R.id.action_feedFragment_to_registrationFragment)
+                            true
+                            }
 
                             else -> false
                         }

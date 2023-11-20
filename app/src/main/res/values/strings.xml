@@ -35,5 +35,7 @@
     <string name="back_posts">back to posts</string>
     <string name="login">login</string>
     <string name="google_play_unavailable">Google Api Unavailable</string>
+    <string name="user_not_found">user not found</string>
+    <string name="unknow_error">unknow error</string>
 
 </resources>

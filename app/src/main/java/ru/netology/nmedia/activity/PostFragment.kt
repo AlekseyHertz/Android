@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.OnInteractionListener
@@ -33,9 +33,7 @@ class PostFragment() : Fragment() {
             false
         )
 
-        val viewModel: PostViewModel by viewModels(
-            ownerProducer = ::requireParentFragment
-        )
+        val viewModel: PostViewModel by activityViewModels()
 
         val postId = arguments?.getLong("postId")
 

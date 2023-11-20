@@ -1,7 +1,6 @@
 package ru.netology.nmedia.activity // из MainActivity
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,22 +8,33 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.activity.PostFragment.Companion.postId
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostAdapter
+import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.vi.AuthViewModel
 import ru.netology.nmedia.viewmodel.PostViewModel
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class FeedFragment : Fragment() {
+
+    @Inject
+    lateinit var appAuth: AppAuth
+
     private val viewModel: PostViewModel by activityViewModels()
+    val authViewModel: AuthViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,6 +47,11 @@ class FeedFragment : Fragment() {
             container,
             false
         )
+
+        authViewModel.data.observe(viewLifecycleOwner) {
+            requireActivity().invalidateOptionsMenu()
+        }
+
         val adapter = PostAdapter(object : OnInteractionListener {
             override fun onEdit(post: Post) {
                 viewModel.edit(post)
@@ -77,21 +92,31 @@ class FeedFragment : Fragment() {
         })
 
         binding.list.adapter = adapter
-        viewModel.data.observe(viewLifecycleOwner)
-        { state ->
-            binding.empty.isVisible = state.empty
-            binding.retry.setOnClickListener {
-                viewModel.loadPosts()
-            }
-            adapter.submitList(state.posts)
 
-            binding.add.setOnClickListener {
-                findNavController().navigate(R.id.action_feedFragment_to_newPostFragment,
-                    Bundle().apply {
-                        textArg = ""
-                    }
-                )
+        lifecycleScope.launchWhenCreated {
+            viewModel.data.collectLatest {
+                adapter.submitData(it)
             }
+        }
+
+        lifecycleScope.launchWhenCreated {
+            adapter.loadStateFlow.collectLatest {
+                binding.swipeRefresh.isRefreshing = it.refresh is LoadState.Loading
+                        || it.append is LoadState.Loading
+                        || it.prepend is LoadState.Loading
+            }
+        }
+
+        binding.swipeRefresh.setOnClickListener {
+            adapter.refresh()
+        }
+
+        binding.add.setOnClickListener {
+            findNavController().navigate(R.id.action_feedFragment_to_newPostFragment,
+                Bundle().apply {
+                    textArg = ""
+                }
+            )
         }
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
@@ -108,7 +133,7 @@ class FeedFragment : Fragment() {
             }
         }
 
-        viewModel.newerCount.observe(viewLifecycleOwner) {
+        /*viewModel.newerCount.observe(viewLifecycleOwner) {
             Log.d("FeedFragment", "Newer count: $it")
             if (it > 0) {
                 binding.loadPost.visibility = View.VISIBLE
@@ -120,7 +145,7 @@ class FeedFragment : Fragment() {
                 viewModel.refresh()
                 binding.loadPost.visibility = View.GONE
             }
-        }
+        }*/
 
         adapter.registerAdapterDataObserver(object : AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
