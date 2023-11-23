@@ -1,13 +1,6 @@
-package ru.netology.nmedia.repository
+package ru.netology.nmedia.garbage
 
-import androidx.paging.PagingSource
-import androidx.paging.PagingState
-import retrofit2.HttpException
-import ru.netology.nmedia.api.PostsApiService
-import ru.netology.nmedia.dto.Post
-import java.io.IOException
-
-class PostPagingSource(
+/*class PostPagingSource(
     private val apiService: PostsApiService
 ) : PagingSource<Long, Post>() {
     override fun getRefreshKey(state: PagingState<Long, Post>): Long? = null
@@ -43,3 +36,5 @@ class PostPagingSource(
         }
     }
 }
+
+ */

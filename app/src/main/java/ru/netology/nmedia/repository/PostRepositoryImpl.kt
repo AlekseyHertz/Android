@@ -1,15 +1,23 @@
+@file:OptIn(ExperimentalPagingApi::class)
+
 package ru.netology.nmedia.repository // из PostRepositoryFileImpl
 
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import ru.netology.nmedia.api.PostsApiService
 import ru.netology.nmedia.dao.PostDao
+import ru.netology.nmedia.dao.PostRemoteKeyDao
+import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.Attachment
 import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.Media
@@ -22,19 +30,28 @@ import ru.netology.nmedia.error.NetworkError
 import ru.netology.nmedia.error.UnknownError
 import java.io.IOException
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class PostRepositoryImpl @Inject constructor(
     private val dao: PostDao,
     private val apiService: PostsApiService,
+    postRemoteKeyDao: PostRemoteKeyDao,
+    appDb: AppDb,
 ) : PostRepository {
-    override val data = Pager(
-        config = PagingConfig (pageSize = 10, enablePlaceholders = false),
-        pagingSourceFactory = {
-            PostPagingSource (
-                apiService
-                    )
-        }
+
+    @OptIn(ExperimentalPagingApi::class)
+    override val data: Flow<PagingData<Post>> = Pager(
+        config = PagingConfig(pageSize = 5, enablePlaceholders = false),
+        pagingSourceFactory = { dao.getPagingSource() },
+        remoteMediator = PostRemoteMediator(
+            apiService = apiService,
+            postDao = dao,
+            postRemoteKeyDao = postRemoteKeyDao,
+            appDb = appDb,
+        )
     ).flow
+        .map { it.map(PostEntity::toDto) }
     /*dao.getAll()
         .map(List<PostEntity>::toDto)
         .flowOn(Dispatchers.Default)*/
