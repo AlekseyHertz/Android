@@ -5,16 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.activity.PostFragment.Companion.postId
@@ -107,9 +108,7 @@ class FeedFragment : Fragment() {
             }
         }
 
-        binding.swipeRefresh.setOnClickListener {
-            adapter.refresh()
-        }
+        binding.swipeRefresh.setOnRefreshListener(adapter::refresh)
 
         binding.add.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment,
@@ -119,7 +118,19 @@ class FeedFragment : Fragment() {
             )
         }
 
-        viewModel.state.observe(viewLifecycleOwner) { state ->
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                adapter.loadStateFlow.collectLatest { state ->
+                    binding.swipeRefresh.isRefreshing =
+                        state.refresh is LoadState.Loading //||
+//                                state.prepend is LoadState.Loading ||
+//                                state.append is LoadState.Loading
+                }
+            }
+        }
+
+        // устаревший вариант кода
+        /*viewModel.state.observe(viewLifecycleOwner) { state ->
 //            binding.errorGroup.isVisible = state.error
             binding.progress.isVisible = state.loading
             binding.swipeRefresh.isRefreshing = state.refreshing
@@ -131,7 +142,7 @@ class FeedFragment : Fragment() {
                     .setAction(R.string.repead) { viewModel.loadPosts() }
                     .show()
             }
-        }
+        }*/
 
         /*viewModel.newerCount.observe(viewLifecycleOwner) {
             Log.d("FeedFragment", "Newer count: $it")

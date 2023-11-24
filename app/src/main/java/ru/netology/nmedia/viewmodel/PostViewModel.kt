@@ -7,16 +7,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
+import ru.netology.nmedia.dto.FeedItem
 import ru.netology.nmedia.dto.MediaUpload
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedModelState
@@ -50,16 +50,24 @@ class PostViewModel @Inject constructor(
     private val repository: PostRepository,
     private val appAuth: AppAuth,
 ) : ViewModel() {
+    private val cached = repository
+        .data
+        .cachedIn(viewModelScope)
 
-    val data: Flow<PagingData<Post>> = appAuth
+    val data: Flow<PagingData<FeedItem>> = appAuth
         ._authStateFlow
         .flatMapLatest { (myId, _) ->
-            repository.data
-                .map { posts ->
-                    posts.map { it.copy(ownerByMe = it.authorId == myId) }
+            cached.map { pagingData ->
+                pagingData.map { post ->
+                    if (post is Post) {
+                        post.copy(ownerByMe = post.authorId == myId)
+                    } else {
+                        post
+                    }
                 }
+            }
         }
-        .flowOn(Dispatchers.Default)
+
 
     /*val data: LiveData<FeedModel> = appAuth
         ._authStateFlow
@@ -106,7 +114,7 @@ class PostViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _state.value = FeedModelState(loading = true)
-            _state.value = FeedModelState()
+                _state.value = FeedModelState()
             } catch (e: Exception) {
                 _state.value = FeedModelState(error = true)
             }

@@ -6,6 +6,8 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import ru.netology.nmedia.R
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -49,7 +51,7 @@ object AndroidUtil {
             .into(view as ImageView)
     }
 
-    /*fun ImageView.load(url: String, vararg transforms: BitmapTransformation = emptyArray()) =
+    fun ImageView.load(url: String, vararg transforms: BitmapTransformation = emptyArray()) =
         Glide.with(this)
             .load(url)
             .timeout(10_000)
@@ -58,6 +60,4 @@ object AndroidUtil {
 
     fun ImageView.loadCircleCrop(url: String, vararg transforms: BitmapTransformation = emptyArray()) =
         load(url, CircleCrop(), *transforms)
-
-     */
 }
