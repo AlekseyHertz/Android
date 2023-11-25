@@ -45,7 +45,9 @@ class PostRemoteMediator(
 
                 LoadType.APPEND -> {
                     val id = postRemoteKeyDao.min() ?: return MediatorResult.Success(false)
+                    if (id>1)//
                     apiService.getBefore(id, state.config.pageSize)
+                    else return  MediatorResult.Success (true)//
                 }
             }
 
@@ -60,35 +62,49 @@ class PostRemoteMediator(
             appDb.withTransaction {
                 when (loadType) {
                     LoadType.REFRESH -> {
-                        if (postDao.isEmpty()) {
-                            postDao.clear()
-                            postRemoteKeyDao.insert(
-                                listOf(
+                        postRemoteKeyDao.clear()
+                        postRemoteKeyDao.insert(
+                            listOf(
+                                PostRemoteKeyEntity(
+                                    type = PostRemoteKeyEntity.KeyType.BEFORE,
+                                    key = body.first().id,
+                                ),
+                                PostRemoteKeyEntity(
+                                    type = PostRemoteKeyEntity.KeyType.BEFORE,
+                                    key = body.last().id,
+                                ),
+                            )
+                        )
+                        postDao.clear()
+                        /*if (postDao.isEmpty()) {
+                                postDao.clear()
+                                postRemoteKeyDao.insert(
+                                    listOf(
+                                        PostRemoteKeyEntity(
+                                            PostRemoteKeyEntity.KeyType.AFTER,
+                                            body.first().id
+                                        ),
+                                        PostRemoteKeyEntity(
+                                            PostRemoteKeyEntity.KeyType.BEFORE,
+                                            body.last().id
+                                        ),
+                                    )
+                                )
+                            } else {
+                                postRemoteKeyDao.insert(
                                     PostRemoteKeyEntity(
                                         PostRemoteKeyEntity.KeyType.AFTER,
-                                        body.first().id
-                                    ),
-                                    PostRemoteKeyEntity(
-                                        PostRemoteKeyEntity.KeyType.BEFORE,
-                                        body.last().id
-                                    ),
+                                        body.first().id,
+                                    )
                                 )
-                            )
-                        } else {
-                            postRemoteKeyDao.insert(
-                                PostRemoteKeyEntity(
-                                    PostRemoteKeyEntity.KeyType.AFTER,
-                                    body.first().id,
-                                )
-                            )
-                        }
+                            }*/
                     }
 
                     LoadType.PREPEND -> {
                         postRemoteKeyDao.insert(
                             PostRemoteKeyEntity(
-                                PostRemoteKeyEntity.KeyType.AFTER,
-                                body.first().id
+                                type = PostRemoteKeyEntity.KeyType.AFTER,
+                                key = body.first().id
                             )
                         )
                     }
@@ -96,8 +112,8 @@ class PostRemoteMediator(
                     LoadType.APPEND -> {
                         postRemoteKeyDao.insert(
                             PostRemoteKeyEntity(
-                                PostRemoteKeyEntity.KeyType.BEFORE,
-                                body.last().id
+                                type = PostRemoteKeyEntity.KeyType.BEFORE,
+                                key = body.last().id
                             )
                         )
                     }

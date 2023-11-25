@@ -6,7 +6,6 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.insertSeparators
 import androidx.paging.map
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
@@ -19,7 +18,6 @@ import ru.netology.nmedia.api.PostsApiService
 import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dao.PostRemoteKeyDao
 import ru.netology.nmedia.db.AppDb
-import ru.netology.nmedia.dto.Ad
 import ru.netology.nmedia.dto.Attachment
 import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.FeedItem
@@ -34,7 +32,6 @@ import ru.netology.nmedia.error.UnknownError
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.random.Random
 
 @Singleton
 class PostRepositoryImpl @Inject constructor(
@@ -56,13 +53,15 @@ class PostRepositoryImpl @Inject constructor(
         )
     ).flow.map {
         it.map(PostEntity::toDto)
-            .insertSeparators { previous, next ->
-                if (previous?.id?.rem(5) == 0L) {
-                    Ad(Random.nextLong(), "figma.lpg")
-                } else {
-                    null
-                }
-            }
+        // - ребилд по лекции - //
+//            .insertSeparators { previous, next ->
+//                if (previous?.id?.rem(5) == 0L) {
+//                    Ad(Random.nextLong(), "figma.jpg")
+//                } else {
+//                    null
+//                }
+//            }
+        // - ребилд по лекции - //
     }
     /*dao.getAll()
         .map(List<PostEntity>::toDto)

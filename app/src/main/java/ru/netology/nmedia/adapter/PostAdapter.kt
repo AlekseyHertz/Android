@@ -10,7 +10,6 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import ru.netology.nmedia.BuildConfig.BASE_URL
 import ru.netology.nmedia.R
 import ru.netology.nmedia.api.ApiModule.Companion.glideDownload
 import ru.netology.nmedia.databinding.CardAdBinding
@@ -78,7 +77,7 @@ class AdViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(ad: Ad) {
         binding.apply {
-            image.load("${BASE_URL}media/${ad.image}")
+            image.load("${glideDownload}media/${ad.image}")
             image.setOnClickListener {
                 onInteractionListener
             }
