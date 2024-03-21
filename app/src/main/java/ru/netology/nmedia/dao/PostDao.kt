@@ -27,8 +27,8 @@ interface PostDao {
     @Query("SELECT COUNT(*) FROM PostEntity WHERE hidden == 1")
     suspend fun unreadCount(): Int
 
-//    @Query("UPDATE PostEntity SET hidden = 0")
-//    fun readAll(): Boolean
+    @Query("UPDATE PostEntity SET hidden = 0")
+    suspend fun updateFeed()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(post: PostEntity)
@@ -55,7 +55,7 @@ interface PostDao {
     @Query("DELETE FROM PostEntity WHERE id = :id")
     suspend fun removeById(id: Long)
 
-    @Query(
+    /*@Query(
         """
            UPDATE PostEntity SET
               viewsCount = viewsCount +1
@@ -72,7 +72,7 @@ interface PostDao {
               WHERE id = :id;
         """
     )
-    suspend fun sharedById(id: Long)
+    suspend fun sharedById(id: Long)*/
 }
 
 /*class Converters {

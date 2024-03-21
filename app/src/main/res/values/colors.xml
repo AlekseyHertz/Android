@@ -12,5 +12,13 @@
     <color name="shrine_pink_100">#D339CB</color>
     <color name="shrine_pink_900">#8500A3</color>
     <color name="menu_grey">#838083</color>
+    <color name="lightGreen">#32CD32</color>
+    <color name="turquoise">#008080</color>
+    <color name="darkGreen">#556B2F</color>
+    <color name="lightBlue">#00FFFF</color>
+    <color name="darkSlateGreen">#2F4F4F</color>
+    <color name="navy">#000080</color>
+    <color name= "textColor">#1D1B20</color>
+    <color name="grayBackground">#FEF7FF</color>
 
 </resources>

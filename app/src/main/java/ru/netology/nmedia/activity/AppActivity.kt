@@ -45,11 +45,8 @@ class AppActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         requestNotificationPermission()
         val binding =
-            ActivityAppBinding.inflate(layoutInflater)//by lazy { ActivityAppBinding.inflate(layoutInflater) }
+            ActivityAppBinding.inflate(layoutInflater)
 
-        /*supportFragmentManager.commit {
-            add(R.id.nav_host_fragment, FeedFragment())
-        }*/
         setContentView(binding.root)
         intent?.let {
             if (it.action != Intent.ACTION_SEND) {
@@ -105,8 +102,8 @@ class AppActivity : AppCompatActivity() {
                             R.id.registration -> {
                                 findNavController(R.id.action_feedFragment_to_registrationFragment)
                                 //reg.tryRegistration("","","")
-                                    //.navigate(R.id.action_feedFragment_to_registrationFragment)
-                            true
+                                //.navigate(R.id.action_feedFragment_to_registrationFragment)
+                                true
                             }
 
                             else -> false

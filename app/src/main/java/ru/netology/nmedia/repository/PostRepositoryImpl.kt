@@ -25,7 +25,6 @@ import ru.netology.nmedia.dto.Media
 import ru.netology.nmedia.dto.MediaUpload
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.entity.PostEntity
-import ru.netology.nmedia.entity.toEntity
 import ru.netology.nmedia.error.ApiError
 import ru.netology.nmedia.error.NetworkError
 import ru.netology.nmedia.error.UnknownError
@@ -40,7 +39,6 @@ class PostRepositoryImpl @Inject constructor(
     postRemoteKeyDao: PostRemoteKeyDao,
     appDb: AppDb,
 ) : PostRepository {
-
     @OptIn(ExperimentalPagingApi::class)
     override val data: Flow<PagingData<FeedItem>> = Pager(
         config = PagingConfig(pageSize = 5, enablePlaceholders = false),
@@ -86,7 +84,7 @@ class PostRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun getAll() {
+    /*override suspend fun getAll() {
         try {
             val response = apiService.getAll()
             if (!response.isSuccessful) {
@@ -99,14 +97,14 @@ class PostRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             throw UnknownError
         }
-    }
+    }*/
 
     override suspend fun getById(id: Long) {
         val postResponse = apiService.getById(id)
 
     }
 
-    /*override suspend fun save(post: Post) {
+    override suspend fun save(post: Post) {
         try {
             val response = apiService.save(post)
             if (!response.isSuccessful) {
@@ -119,9 +117,9 @@ class PostRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             throw UnknownError
         }
-    }*/
+    }
 
-    override suspend fun save(post: Post, upload: MediaUpload?) {
+    /*override suspend fun save(post: Post, upload: MediaUpload?) {
         try {
             val postWithAttachment = upload?.let {
                 upload(it)
@@ -141,9 +139,9 @@ class PostRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             throw UnknownError
         }
-    }
+    }*/
 
-    /*override suspend fun saveWithAttachment(post: Post, upload: MediaUpload) {
+    override suspend fun saveWithAttachment(post: Post, upload: MediaUpload) {
         try {
             val media = upload(upload)
             val postWithAttachment =
@@ -156,9 +154,9 @@ class PostRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             throw UnknownError
         }
-    }*/
+    }
 
-    private suspend fun upload(upload: MediaUpload): Media {
+    override suspend fun upload(upload: MediaUpload): Media {
         try {
             val media = MultipartBody.Part.createFormData(
                 "file",
@@ -202,7 +200,7 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun unLikeById(post: Post) {
-        TODO()
+    override suspend fun updateFeed() {
+        dao.updateFeed()
     }
 }

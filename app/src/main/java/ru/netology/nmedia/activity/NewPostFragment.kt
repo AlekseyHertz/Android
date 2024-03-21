@@ -14,7 +14,6 @@ import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import dagger.hilt.android.AndroidEntryPoint
@@ -59,11 +58,6 @@ class NewPostFragment : Fragment() {
 
         arguments?.textArg
             ?.let(binding.edit::setText)
-
-        viewModel.postCreated.observe(viewLifecycleOwner) {
-            viewModel.loadPosts()
-            findNavController().navigateUp()
-        }
 
         requireActivity().addMenuProvider(
             object : MenuProvider {
@@ -118,9 +112,8 @@ class NewPostFragment : Fragment() {
         }
 
         binding.removePhoto.setOnClickListener {
-            viewModel.clearPhoto(null, null)
+            viewModel.clearPhoto()
         }
-
         return binding.root
     }
 }

@@ -1,7 +1,6 @@
 package ru.netology.nmedia.viewmodel
 
 import android.net.Uri
-import androidx.core.net.toFile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,9 +10,11 @@ import androidx.paging.cachedIn
 import androidx.paging.insertSeparators
 import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
@@ -29,20 +30,20 @@ import java.io.File
 import javax.inject.Inject
 import kotlin.random.Random
 
-private val empty = Post(
-    id = 0,
-    authorId = 0,
-    content = "",
-    author = "",
-    authorAvatar = "",
-    likedByMe = false,
-    published = 0,
-    likes = 0,
-    sharedCount = 0,
-    shareByMe = false,
-    viewsCount = 0,
-    viewByMe = false,
-    videoUrl = ""
+private val empty = Post(id = 0
+//    id = 0,
+//    authorId = 0,
+//    content = "",
+//    author = "",
+//    authorAvatar = "",
+//    likedByMe = false,
+//    published = 0,
+//    likes = 0,
+//    sharedCount = 0,
+//    shareByMe = false,
+//    viewsCount = 0,
+//    viewByMe = false,
+//    videoUrl = ""
 )
 
 private val noPhoto = PhotoModel()
@@ -82,7 +83,7 @@ class PostViewModel @Inject constructor(
                         post
                     }
                 }
-            }
+            }.flowOn(Dispatchers.Default)
         }
 
 
@@ -123,7 +124,7 @@ class PostViewModel @Inject constructor(
     val postCreated: LiveData<Unit>
         get() = _postCreated
 
-    init {
+    /*init {
         loadPosts()
     }
 
@@ -137,7 +138,7 @@ class PostViewModel @Inject constructor(
             }
         }
     }
-    /*fun loadPosts() {
+    fun loadPosts() {
         viewModelScope.launch {
             _state.value = FeedModelState(loading = true)
             _state.value = try {
@@ -153,8 +154,8 @@ class PostViewModel @Inject constructor(
         _photo.value = PhotoModel(uri, file)
     }
 
-    fun clearPhoto(uri: Uri?, file: File?) {
-        _photo.value = PhotoModel(uri, file)
+    fun clearPhoto() {
+        _photo.value = PhotoModel()
     }
 
     fun refresh() {
@@ -192,7 +193,7 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun dislikeById(post: Post) {
+    /*fun dislikeById(post: Post) {
         viewModelScope.launch {
             try {
                 _state.value = FeedModelState(loading = true)
@@ -202,7 +203,7 @@ class PostViewModel @Inject constructor(
                 _state.value = FeedModelState(error = true)
             }
         }
-    }
+    }*/
 
     fun edit(post: Post) {
         edited.value = post
@@ -222,21 +223,20 @@ class PostViewModel @Inject constructor(
     }
 
     fun save() {
-        edited.value?.let {
+        edited.value?.let {post ->
             viewModelScope.launch {
                 try {
-                    repository.save(
-                        it, _photo.value?.uri?.let { MediaUpload(it.toFile()) }
-                    )
-
+                    photo.value?.file?.let {
+                        repository.saveWithAttachment(post, MediaUpload(it))
+                    } ?: repository.save(post)
                     _postCreated.value = Unit
+                    edited.value = empty
+                    _dataState.value = FeedModelState()
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    _dataState.value = FeedModelState(error = true)
                 }
             }
         }
-        edited.value = empty
-        _photo.value = noPhoto
     }
 
     /*fun save() {
@@ -271,9 +271,9 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun abortText() {
+    /*fun abortText() {
         edited.value?.let {
             edited.value = empty
         }
-    }
+    }*/
 }

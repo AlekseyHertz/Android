@@ -1,18 +1,18 @@
 package ru.netology.nmedia.activity //
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.R
+import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
+import ru.netology.nmedia.adapter.DetailPostViewHolder
 import ru.netology.nmedia.adapter.OnInteractionListener
-import ru.netology.nmedia.adapter.PostViewHolder
-import ru.netology.nmedia.databinding.FragmentPostBinding
+import ru.netology.nmedia.databinding.FragmentDetailPostBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.util.AndroidUtil
 import ru.netology.nmedia.viewmodel.PostViewModel
@@ -27,24 +27,24 @@ class PostFragment() : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentPostBinding.inflate(
+        val binding = FragmentDetailPostBinding.inflate(
             inflater,
             container,
             false
         )
 
         val viewModel: PostViewModel by activityViewModels()
-
         val postId = arguments?.getLong("postId")
 
-        val adapter = PostViewHolder(binding.post, object : OnInteractionListener {
+        val adapter = DetailPostViewHolder (binding, object : OnInteractionListener {
             override fun onEdit(post: Post) {
                 viewModel.edit(post)
                 findNavController().navigate(
                     R.id.action_postfragment_to_newPostFragment,
-                    bundleOf("content" to post.content)
+                    Bundle().apply {
+                        textArg = post.content
+                    }
                 )
-                Log.d("PostFragment", "edit")
             }
 
 
@@ -66,24 +66,21 @@ class PostFragment() : Fragment() {
                 findNavController().navigateUp()
             }
 
-            /*override fun onShare(post: Post) {
-                viewModel.shareById(post.id)
+            override fun onShare(post: Post) {
                 val intent = Intent().apply {
                     action = Intent.ACTION_SEND
                     type = "text/plain"
                     putExtra(Intent.EXTRA_TEXT, post.content)
                 }
-
-                /*val shareIntent =
-                    Intent.createChooser(intent.getString(R.string.chooser_share_post))
+                val shareIntent = Intent.createChooser(intent, "Share post")
                 startActivity(shareIntent)
-*/
-                val chooser = Intent.createChooser(intent, getString(R.string.chooser_share_post))
+
+                /*val chooser = Intent.createChooser(intent, getString(R.string.chooser_share_post))
                 startActivity(chooser)
             }
 
              */
-        })
+            }
 //        viewModel.data.observe(viewLifecycleOwner) { posts ->
 //            val post = posts.find { it.id == requireArguments().postId } ?: run {
 //                findNavController().navigateUp()
@@ -91,7 +88,7 @@ class PostFragment() : Fragment() {
 //            }
 //            postViewHolder.bind(post)
 //        }
-
+        })
         return binding.root
     }
 }

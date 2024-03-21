@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -32,19 +33,34 @@ class RegisterFragment : Fragment() {
             false
         )
 
-        binding.back.setOnClickListener {
+        binding.navBack.setOnClickListener {
             findNavController().navigateUp()
+        }
+
+        registrationViewModel.dataState.observe(viewLifecycleOwner) { state ->
+            when {
+                state.userAlreadyExists -> Toast.makeText(
+                    context,
+                    R.string.user_already_exists.toString(),
+                    Toast.LENGTH_LONG
+                ).show()
+
+                state.error -> Toast.makeText(context, R.string.unknown_error, Toast.LENGTH_LONG)
+                    .show()
+            }
+
         }
 
         authViewModel.data.observe(viewLifecycleOwner) {
             binding.register.setOnClickListener {
                 AndroidUtil.AndroidUtils.hideKeyboard(requireView())
 
-                val userLogin = binding.userLogin.text.toString()
-                val userPassword = binding.userPassword.text.toString()
-                val userName = binding.userName.text.toString()
+                val userLogin = binding.userLogin.editText?.text.toString()
+                val userPassword = binding.userPassword.editText?.text.toString()
+                val userName = binding.userName.editText?.text.toString()
+                val userRepeatPassword = binding.repeatPassword.editText?.text.toString()
 
-                if (userName.isBlank() || userLogin.isBlank() || userPassword.isBlank()) {
+                if (userName.isBlank() || userLogin.isBlank() || userPassword.isBlank() || userRepeatPassword.isBlank()) {
                     Snackbar.make(binding.root, R.string.error_empty_content, Snackbar.LENGTH_LONG)
                         .show()
                     return@setOnClickListener
@@ -60,8 +76,6 @@ class RegisterFragment : Fragment() {
                 findNavController().navigate(R.id.feedFragment)
             }
         }
-
-
 
         return binding.root
     }

@@ -53,12 +53,13 @@ class FragmentAuth : Fragment() {
         }
 
         authViewModel.data.observe(viewLifecycleOwner) {
-
-
-            binding.sighInAuth.setOnClickListener {
+            if (authViewModel.authorized) {
+                findNavController().navigateUp()
+            }
+            binding.login.setOnClickListener {
                 AndroidUtil.AndroidUtils.hideKeyboard(requireView())
-                val accountName = binding.userlogin.text.toString()
-                val accountPassword = binding.password.text.toString()
+                val accountName = binding.userLogin.editText?.text.toString()
+                val accountPassword = binding.password.editText?.text.toString()
                 if (accountName.isBlank() || accountPassword.isBlank()) {
                     Snackbar.make(binding.root, R.string.noLogin, Snackbar.LENGTH_LONG).show()
                     return@setOnClickListener

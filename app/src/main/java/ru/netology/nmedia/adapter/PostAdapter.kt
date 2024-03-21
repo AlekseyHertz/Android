@@ -23,7 +23,7 @@ import ru.netology.nmedia.util.AndroidUtil.load
 interface OnInteractionListener {
     fun onLike(post: Post) {}
     fun onShare(post: Post) {}
-    fun onView(post: Post) {}
+    //fun onView(post: Post) {}
     fun onEdit(post: Post) {}
     fun onRemove(post: Post) {}
     fun save(post: Post) {}
@@ -31,6 +31,7 @@ interface OnInteractionListener {
     fun playVideo(post: Post) {}
     fun onPost(post: Post) {}
     fun onImage(post: Post) {}
+    fun onAd(ad: Ad) {}
 }
 
 class PostAdapter(
@@ -151,11 +152,11 @@ class PostViewHolder(
                 //shareCallBack(post)
             }
 
-            views.setOnClickListener {
-                Log.d("stuff", "view") // оставим для logcat
-                onInteractionListener.onView(post)
-                //viewCallBack(post)
-            }
+//            views.setOnClickListener {
+//                Log.d("stuff", "view") // оставим для logcat
+//                onInteractionListener.onView(post)
+//                //viewCallBack(post)
+//            }
 
             menu.isVisible = post.ownerByMe
 

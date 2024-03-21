@@ -1,5 +1,6 @@
 package ru.netology.nmedia.activity // из MainActivity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,7 +19,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
-import ru.netology.nmedia.activity.PostFragment.Companion.postId
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostAdapter
 import ru.netology.nmedia.adapter.PostLoadingStateAdapter
@@ -67,7 +67,11 @@ class FeedFragment : Fragment() {
             }
 
             override fun onLike(post: Post) {
-                viewModel.likeById(post)
+                if (authViewModel.authorized) {
+                    viewModel.likeById(post)
+                } else {
+                    findNavController().navigate(R.id.action_feedFragment_to_fragment_auth)
+                }
             }
 
             override fun onRemove(post: Post) {
@@ -75,12 +79,27 @@ class FeedFragment : Fragment() {
             }
 
             override fun onPost(post: Post) {
-                findNavController().navigate(
-                    R.id.action_feedFragment_to_postFragment,
-                    Bundle().apply {
-                        postId = post.id
-                    }
-                )
+                if (authViewModel.authorized) {
+                    findNavController().navigate(
+                        R.id.action_feedFragment_to_postFragment,
+                        Bundle().apply {
+                            putLong("postId", post.id)
+                        }
+                    )
+                } else {
+                    findNavController().navigate(R.id.action_feedFragment_to_fragment_auth)
+                }
+            }
+
+            override fun onShare(post: Post) {
+                val intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, post.content)
+                    type = "text/plain"
+                }
+                val shareIntent =
+                    Intent.createChooser(intent, "Share post")
+                startActivity(shareIntent)
             }
 
             override fun onImage(post: Post) {
@@ -98,12 +117,14 @@ class FeedFragment : Fragment() {
             footer = PostLoadingStateAdapter { adapter.retry() }
         )
 
+        @Suppress("DEPRECATION")
         lifecycleScope.launchWhenCreated {
             viewModel.data.collectLatest {
                 adapter.submitData(it)
             }
         }
 
+        @Suppress("DEPRECATION")
         lifecycleScope.launchWhenCreated {
             adapter.loadStateFlow.collectLatest {
                 binding.swipeRefresh.isRefreshing = it.refresh is LoadState.Loading
@@ -115,11 +136,12 @@ class FeedFragment : Fragment() {
         binding.swipeRefresh.setOnRefreshListener(adapter::refresh)
 
         binding.add.setOnClickListener {
-            findNavController().navigate(R.id.action_feedFragment_to_newPostFragment,
-                Bundle().apply {
-                    textArg = ""
-                }
-            )
+            if (authViewModel.authorized) {
+                findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
+            } else {
+                findNavController().navigate(R.id.action_feedFragment_to_fragment_auth)
+            }
+
         }
 
         viewLifecycleOwner.lifecycleScope.launch {

@@ -19,7 +19,8 @@ class ApiModule {
 
     companion object {
         private const val BASE_URL = BuildConfig.BASE_URL
-        val glideDownload = "http://10.0.2.2:9999/"
+        val glideDownload = "http://94.228.125.135:8080/"
+    //val glideDownload = "http://10.0.2.2:9999/"
     }
 
     @Provides
