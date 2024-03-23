@@ -19,8 +19,8 @@ class ApiModule {
 
     companion object {
         private const val BASE_URL = BuildConfig.BASE_URL
-        val glideDownload = "http://94.228.125.135:8080/"
-    //val glideDownload = "http://10.0.2.2:9999/"
+        val glideDownload = "http://94.228.125.136:8080/api/"
+    //val glideDownload = "http://10.0.2.2:9999/api/"
     }
 
     @Provides
@@ -41,7 +41,7 @@ class ApiModule {
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(logging)
         .addInterceptor { chain ->
-            appAuth._authStateFlow.value.token?.let { token ->
+            appAuth.authStateFlow.value.token?.let { token ->
                 val newRequest = chain.request().newBuilder()
                     .addHeader("Authorization", token)
                     .build()
