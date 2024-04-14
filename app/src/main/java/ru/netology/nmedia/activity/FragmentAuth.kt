@@ -74,8 +74,11 @@ class FragmentAuth : Fragment() {
                         }
                     }*/
             }
+        }
+
+        binding.navRegister.setOnClickListener {
             if (authViewModel.authorized) {
-                findNavController().navigate(R.id.feedFragment)
+                findNavController().navigate(R.id.registerFragment)
             }
         }
 

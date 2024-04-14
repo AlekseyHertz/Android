@@ -22,7 +22,7 @@ class PostRemoteMediator(
     private val appDb: AppDb,
 ) : RemoteMediator<Int, PostEntity>() {
 
-    @Suppress("IMPLICIT_CAST_TO_ANY")
+    //@Suppress("IMPLICIT_CAST_TO_ANY")
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, PostEntity>
@@ -64,6 +64,7 @@ class PostRemoteMediator(
                     LoadType.REFRESH -> {
                         if (postDao.isEmpty()) {
                             postRemoteKeyDao.clear()
+                            if (body.isEmpty()) return@withTransaction MediatorResult.Success(false)
                             postRemoteKeyDao.insert(
                                 listOf(
                                     PostRemoteKeyEntity(
@@ -77,6 +78,7 @@ class PostRemoteMediator(
                                 )
                             )
                         } else {
+                            if (body.isEmpty()) return@withTransaction MediatorResult.Success(false)
                             postRemoteKeyDao.insert(
                                 PostRemoteKeyEntity(
                                     PostRemoteKeyEntity.KeyType.AFTER,
@@ -87,10 +89,13 @@ class PostRemoteMediator(
                     }
 
                     LoadType.PREPEND -> {
+                        if (body.isEmpty()) return@withTransaction MediatorResult.Success(false)
                         postRemoteKeyDao.insert(
                             PostRemoteKeyEntity(
                                 PostRemoteKeyEntity.KeyType.AFTER,
+
                                 body.first().id
+
                             )
                         )
                     }

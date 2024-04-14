@@ -9,6 +9,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
@@ -118,11 +119,15 @@ class FeedFragment : Fragment() {
         )
 
         @Suppress("DEPRECATION")
-        lifecycleScope.launchWhenCreated {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.data.flowWithLifecycle(viewLifecycleOwner.lifecycle)
+                .collectLatest { adapter.submitData(it) }
+        }
+        /*lifecycleScope.launchWhenCreated {
             viewModel.data.collectLatest {
                 adapter.submitData(it)
             }
-        }
+        }*/
 
         @Suppress("DEPRECATION")
         lifecycleScope.launchWhenCreated {

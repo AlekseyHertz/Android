@@ -15,6 +15,7 @@ import ru.netology.nmedia.api.ApiModule.Companion.glideDownload
 import ru.netology.nmedia.databinding.CardAdBinding
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.Ad
+import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.FeedItem
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.dto.convertCount
@@ -42,7 +43,8 @@ class PostAdapter(
         when (getItem(position)) {
             is Ad -> R.layout.card_ad
             is Post -> R.layout.card_post
-            null -> error("unknown item type")
+            //null -> error("unknown item type")
+            else -> {error("unknown item type")}
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
@@ -67,7 +69,8 @@ class PostAdapter(
         when (val item = getItem(position)) {
             is Ad -> (holder as? AdViewHolder)?.bind(item)
             is Post -> (holder as? PostViewHolder)?.bind(item)
-            null -> error("unknown item type")
+            //null -> error("unknown item type")
+            else -> {error("unknown item type")}
         }
     }
 }
@@ -102,7 +105,8 @@ class PostViewHolder(
             }
 
             Glide.with(binding.avatar)
-                .load("${glideDownload}avatars/${post.authorAvatar}")
+                //.load("${glideDownload}authorAvatar/${post.authorAvatar}")
+                .load("${post.authorAvatar}")
                 .placeholder(R.drawable.ic_download_24)
                 .error(R.drawable.ic_error_24)
                 .timeout(10_000)
@@ -110,7 +114,8 @@ class PostViewHolder(
                 .into(binding.avatar)
 
             Glide.with(binding.typeAttachment)
-                .load("${glideDownload}media/${post.attachment?.url}")
+                //.load("${glideDownload}attachment/${post.attachment?.url}")
+                .load("${post.attachment?.url}")
                 .placeholder(R.drawable.ic_download_24)
                 .error(R.drawable.ic_error_24)
                 .timeout(10_000)

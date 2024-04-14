@@ -1,2 +1,4 @@
 /build
 /google-services.json
+/secrets.properties
+/src/main/java/ru.netology.nmedia/garbage

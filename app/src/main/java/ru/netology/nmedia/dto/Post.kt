@@ -8,7 +8,7 @@ data class Post(
     override val id: Long,
     val author: String = "",
     val authorId: Long = 0L,
-    val authorAvatar: String = "",
+    val authorAvatar: String? = null,
     val content: String = "",
     val published: String = "",
     val likes: Int = 0,
@@ -29,12 +29,14 @@ data class Ad(
 ) : FeedItem
 
 data class Attachment(
-    val url: String,
-    val type: AttachmentType
+    val url: String?,
+    val type: AttachmentType?
 )
 
-enum class AttachmentType{
-    IMAGE
+enum class AttachmentType {
+    IMAGE,
+    VIDEO,
+    AUDIO
 }
 
 fun convertCount(element: Int) =

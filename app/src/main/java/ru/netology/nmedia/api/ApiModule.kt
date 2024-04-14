@@ -39,6 +39,14 @@ class ApiModule {
         logging: HttpLoggingInterceptor,
         appAuth: AppAuth
     ): OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor {
+            it.proceed(
+                it.request()
+                    .newBuilder()
+                    .addHeader("Api-Key", BuildConfig.API_KEY)
+                    .build()
+            )
+        }
         .addInterceptor(logging)
         .addInterceptor { chain ->
             appAuth.authStateFlow.value.token?.let { token ->
@@ -54,7 +62,7 @@ class ApiModule {
     @Provides
     @Singleton
     fun provideRetrofit(
-        okHttpClient: OkHttpClient,
+        okHttpClient: OkHttpClient
     ): Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())

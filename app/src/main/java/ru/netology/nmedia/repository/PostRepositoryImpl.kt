@@ -2,6 +2,7 @@
 
 package ru.netology.nmedia.repository // из PostRepositoryFileImpl
 
+import android.annotation.SuppressLint
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -104,6 +105,7 @@ class PostRepositoryImpl @Inject constructor(
 
     }
 
+    @SuppressLint("SuspiciousIndentation")
     override suspend fun save(post: Post) {
         try {
             val response = apiService.save(post)

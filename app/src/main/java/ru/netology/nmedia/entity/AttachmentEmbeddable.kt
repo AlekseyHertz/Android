@@ -4,8 +4,8 @@ import ru.netology.nmedia.dto.Attachment
 import ru.netology.nmedia.dto.AttachmentType
 
 data class AttachmentEmbeddable(
-    var url: String,
-    var type: AttachmentType,
+    var url: String? = null,
+    var type: AttachmentType? = null,
 ) {
     fun toDto() = Attachment(url, type)
 
