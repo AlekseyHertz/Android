@@ -20,5 +20,6 @@
     <color name="navy">#000080</color>
     <color name= "textColor">#1D1B20</color>
     <color name="grayBackground">#FEF7FF</color>
+    <color name="BackgroundForPanel">#F3EDF7</color>
 
 </resources>

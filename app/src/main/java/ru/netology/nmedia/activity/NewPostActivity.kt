@@ -32,16 +32,7 @@ class NewPostActivity : AppCompatActivity() {
             } else {
                 setResult(RESULT_OK, Intent(). apply { putExtra(Intent.EXTRA_TEXT,text) })
             }
-            finish() //
+            finish()
         }
     }
 }
-
-/*object NewPostContract : ActivityResultContract<String?, String?>() {
-    override fun createIntent(context: Context, input: String?) =
-        Intent(context, NewPostActivity::class.java).putExtra(Intent.EXTRA_TEXT, input)
-
-    override fun parseResult(resultCode: Int, intent: Intent?) =
-        intent?.getStringExtra(Intent.EXTRA_TEXT)
-
-}*/

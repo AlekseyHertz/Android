@@ -9,8 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nmedia.databinding.ItemLoadingBinding
 
 class PostLoadingStateAdapter(
-    private val retryListener: () -> Unit,
-) : LoadStateAdapter<PostLoadingViewHolder>() {
+    private val retryListener: () -> Unit
+) : LoadStateAdapter<PostLoadingStateAdapter.PostLoadingViewHolder>() {
+
+
     override fun onBindViewHolder(holder: PostLoadingViewHolder, loadState: LoadState) {
         holder.bind(loadState)
     }
@@ -22,20 +24,20 @@ class PostLoadingStateAdapter(
         ItemLoadingBinding.inflate(LayoutInflater.from(parent.context), parent, false),
         retryListener,
     )
-}
 
-class PostLoadingViewHolder(
-    private val itemLoadingBinding: ItemLoadingBinding,
-    private val retryListener: () -> Unit,
-) : RecyclerView.ViewHolder(itemLoadingBinding.root) {
+    class PostLoadingViewHolder(
+        private val itemLoadingBinding: ItemLoadingBinding,
+        private val retryListener: () -> Unit,
+    ) : RecyclerView.ViewHolder(itemLoadingBinding.root) {
 
 
-    fun bind(loadState: LoadState) {
-        itemLoadingBinding.apply {
-            progress.isVisible = loadState is LoadState.Loading
-            retryButton.isVisible = loadState is LoadState.Error
-            retryButton.setOnClickListener {
-                retryListener()
+        fun bind(loadState: LoadState) {
+            itemLoadingBinding.apply {
+                progress.isVisible = loadState is LoadState.Loading
+                retryButton.isVisible = loadState is LoadState.Error
+                retryButton.setOnClickListener {
+                    retryListener()
+                }
             }
         }
     }

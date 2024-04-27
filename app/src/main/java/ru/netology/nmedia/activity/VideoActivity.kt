@@ -11,7 +11,6 @@ class VideoActivity : AppCompatActivity() {
         val binding = ActivityVideoBinding.inflate(layoutInflater)
         setContentView(binding.videoPic)
 
-
         binding.videoPic.setOnClickListener {
             Intent.ACTION_VIEW
         }
@@ -22,10 +21,3 @@ class VideoActivity : AppCompatActivity() {
         }
     }
 }
-
-/*object VideoContract: ActivityResultContract<Unit, String?>() {
-    override fun createIntent(context: Context, input: Unit): Intent (context, VideoActivity::class.java)
-
-    override fun parseResult(resultCode: Int, intent: Intent?) = intent?.getExtra(Intent.EXTRA_VIEW)
-    }
-}*/

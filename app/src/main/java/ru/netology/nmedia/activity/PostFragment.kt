@@ -47,19 +47,9 @@ class PostFragment() : Fragment() {
                 )
             }
 
-
-            /*override fun playVideo(post: Post) {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.videoUrl))
-                startActivity(intent)
-            }*/
-
             override fun onLike(post: Post) {
                 viewModel.likeById(post)
             }
-
-            /*override fun onView(post: Post) {
-                viewModel.viewById(post.id)
-            }*/
 
             override fun onRemove(post: Post) {
                 viewModel.removeById(post.id)
@@ -74,20 +64,7 @@ class PostFragment() : Fragment() {
                 }
                 val shareIntent = Intent.createChooser(intent, "Share post")
                 startActivity(shareIntent)
-
-                /*val chooser = Intent.createChooser(intent, getString(R.string.chooser_share_post))
-                startActivity(chooser)
             }
-
-             */
-            }
-//        viewModel.data.observe(viewLifecycleOwner) { posts ->
-//            val post = posts.find { it.id == requireArguments().postId } ?: run {
-//                findNavController().navigateUp()
-//                return@observe
-//            }
-//            postViewHolder.bind(post)
-//        }
         })
         return binding.root
     }

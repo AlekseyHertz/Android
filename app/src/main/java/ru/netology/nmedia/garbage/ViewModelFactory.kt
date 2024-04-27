@@ -1,4 +1,4 @@
-package ru.netology.nmedia.viewmodel
+package ru.netology.nmedia.garbage
 
 /*class ViewModelFactory(
     private val repository: PostRepository,

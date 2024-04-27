@@ -90,5 +90,7 @@
     <string name="mentioned">Mentioned</string>
     <string name="participate">Participate</string>
     <string name="event">Event</string>
+    <string name="video_container">Video container</string>
+    <string name="content_can_t_be_empty">Content can\'t be empty</string>
 
 </resources>

@@ -9,9 +9,13 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
@@ -38,6 +42,7 @@ class FeedFragment : Fragment() {
 
     private val viewModel: PostViewModel by activityViewModels()
     val authViewModel: AuthViewModel by activityViewModels()
+    private lateinit var navController: NavController
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,7 +56,37 @@ class FeedFragment : Fragment() {
             false
         )
 
-        authViewModel.data.observe(viewLifecycleOwner) {
+        viewLifecycleOwner.lifecycle.addObserver(
+            object : LifecycleEventObserver {
+                override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+                    when (event) {
+                        Lifecycle.Event.ON_RESUME -> binding.list.createPlayer()
+                        Lifecycle.Event.ON_PAUSE,
+                        Lifecycle.Event.ON_STOP -> binding.list.releasePlayer()
+
+                        Lifecycle.Event.ON_DESTROY -> source.lifecycle.removeObserver(this)
+                        else -> Unit
+                    }
+                }
+            }
+        )
+
+        navController = findNavController()
+        val currentBackStackEntry = requireNotNull(navController.currentBackStackEntry)
+        val savedStateHandle = currentBackStackEntry.savedStateHandle
+        savedStateHandle.getLiveData<Boolean>(FragmentAuth.LOGIN_SUCCESSFUL)
+            .observe(currentBackStackEntry) { success ->
+                if (!success) {
+                    val startDestination = navController.graph.startDestinationId
+                    val navOptions = NavOptions.Builder()
+                        .setPopUpTo(startDestination, true)
+                        .build()
+                    navController.navigate(startDestination, null, navOptions)
+                }
+            }
+
+        authViewModel.data.observe(viewLifecycleOwner)
+        {
             requireActivity().invalidateOptionsMenu()
         }
 
@@ -114,8 +149,10 @@ class FeedFragment : Fragment() {
         })
 
         binding.list.adapter = adapter.withLoadStateHeaderAndFooter(
-            header = PostLoadingStateAdapter { adapter.retry() },
-            footer = PostLoadingStateAdapter { adapter.retry() }
+            header = PostLoadingStateAdapter
+            { adapter.retry() },
+            footer = PostLoadingStateAdapter
+            { adapter.retry() }
         )
 
         @Suppress("DEPRECATION")
@@ -123,14 +160,10 @@ class FeedFragment : Fragment() {
             viewModel.data.flowWithLifecycle(viewLifecycleOwner.lifecycle)
                 .collectLatest { adapter.submitData(it) }
         }
-        /*lifecycleScope.launchWhenCreated {
-            viewModel.data.collectLatest {
-                adapter.submitData(it)
-            }
-        }*/
 
         @Suppress("DEPRECATION")
-        lifecycleScope.launchWhenCreated {
+        lifecycleScope.launchWhenCreated()
+        {
             adapter.loadStateFlow.collectLatest {
                 binding.swipeRefresh.isRefreshing = it.refresh is LoadState.Loading
                         || it.append is LoadState.Loading
@@ -158,42 +191,15 @@ class FeedFragment : Fragment() {
             }
         }
 
-        // устаревший вариант кода
-        /*viewModel.state.observe(viewLifecycleOwner) { state ->
-//            binding.errorGroup.isVisible = state.error
-            binding.progress.isVisible = state.loading
-            binding.swipeRefresh.isRefreshing = state.refreshing
-            binding.swipeRefresh.setOnClickListener {
-                viewModel.refresh()
-            }
-            if (state.error) {
-                Snackbar.make(binding.root, R.string.error_download, Snackbar.LENGTH_LONG)
-                    .setAction(R.string.repead) { viewModel.loadPosts() }
-                    .show()
-            }
-        }*/
 
-        /*viewModel.newerCount.observe(viewLifecycleOwner) {
-            Log.d("FeedFragment", "Newer count: $it")
-            if (it > 0) {
-                binding.loadPost.visibility = View.VISIBLE
-                binding.loadPost.text = "Новых постов: $it"
-            } else {
-                binding.loadPost.visibility = View.GONE
-            }
-            binding.loadPost.setOnClickListener {
-                viewModel.refresh()
-                binding.loadPost.visibility = View.GONE
-            }
-        }*/
-
-        adapter.registerAdapterDataObserver(object : AdapterDataObserver() {
-            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                if (positionStart == 0) {
-                    binding.list.smoothScrollToPosition(0)
+        adapter.registerAdapterDataObserver(
+            object : AdapterDataObserver() {
+                override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                    if (positionStart == 0) {
+                        binding.list.smoothScrollToPosition(0)
+                    }
                 }
-            }
-        })
+            })
 
         return binding.root
     }

@@ -38,10 +38,3 @@ class PhotoActivity : Fragment() {
         return binding.root
     }
 }
-
-/*object VideoContract: ActivityResultContract<Unit, String?>() {
-    override fun createIntent(context: Context, input: Unit): Intent (context, VideoActivity::class.java)
-
-    override fun parseResult(resultCode: Int, intent: Intent?) = intent?.getExtra(Intent.EXTRA_VIEW)
-    }
-}*/

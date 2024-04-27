@@ -1,6 +1,7 @@
 package ru.netology.nmedia.api
 
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -60,11 +61,16 @@ interface PostsApiService {
     suspend fun savePushToken(@Body token: PushToken): Response<Unit>
 
     @Multipart
-    @POST("media")
-    suspend fun saveMedia(@Part part: MultipartBody.Part): Response<Media>
+    @POST("users/registration")
+    suspend fun registerWithPhoto(
+        @Part("login") login: RequestBody,
+        @Part("password") pass: RequestBody,
+        @Part("name") name: RequestBody,
+        @Part file: MultipartBody.Part?,
+    ): Response<Token>
 
     @FormUrlEncoded
-    @POST("user/registration")
+    @POST("users/registration")
     suspend fun registerUser(
         @Field("login") login: String,
         @Field("pass") pass: String,
@@ -78,7 +84,6 @@ interface PostsApiService {
         @Field("pass") pass: String
     ): Response<Token>
 
-    // - users - //
     @GET("users")
     suspend fun getUsers(): Response<List<User>>
 
@@ -137,4 +142,8 @@ interface PostsApiService {
     @GET("events/{event_id}")
     suspend fun getEvent(@Path("event_id") id: Int): Response<Event>
 
+    // - media - //
+    @Multipart
+    @POST("media")
+    suspend fun saveMedia(@Part part: MultipartBody.Part): Response<Media>
 }

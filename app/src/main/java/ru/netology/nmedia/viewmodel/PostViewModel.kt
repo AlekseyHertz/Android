@@ -19,7 +19,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.dto.Ad
+import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.FeedItem
+import ru.netology.nmedia.dto.MediaModel
 import ru.netology.nmedia.dto.MediaUpload
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedModelState
@@ -30,23 +32,8 @@ import java.io.File
 import javax.inject.Inject
 import kotlin.random.Random
 
-private val empty = Post(id = 0
-//    id = 0,
-//    authorId = 0,
-//    content = "",
-//    author = "",
-//    authorAvatar = "",
-//    likedByMe = false,
-//    published = 0,
-//    likes = 0,
-//    sharedCount = 0,
-//    shareByMe = false,
-//    viewsCount = 0,
-//    viewByMe = false,
-//    videoUrl = ""
-)
-
-private val noPhoto = PhotoModel()
+private val empty = Post(id = 0)
+private val noMedia = MediaModel()
 
 @HiltViewModel
 @ExperimentalCoroutinesApi
@@ -86,30 +73,7 @@ class PostViewModel @Inject constructor(
             }.flowOn(Dispatchers.Default)
         }
 
-
-    /*val data: LiveData<FeedModel> = appAuth
-        ._authStateFlow
-        .flatMapLatest { (myId, _) ->
-            repository.data
-                .map { posts ->
-                    FeedModel(
-                        posts.map {
-                            it.copy(ownerByMe = it.authorId == myId)
-                        },
-                        posts.isEmpty()
-                    )
-                }
-        }
-        .asLiveData(Dispatchers.Default)*/
-
-
     private val _dataState = MutableLiveData<FeedModelState>()
-
-    /*val newerCount: LiveData<Int> = data.switchMap {
-        repository.getNewerCount(it.posts.firstOrNull()?.id ?: 0L)
-            .catch { e -> e.printStackTrace() }
-            .asLiveData(Dispatchers.Default)
-    }*/
 
     private val _state = MutableLiveData<FeedModelState>()
     val state: LiveData<FeedModelState>
@@ -119,14 +83,15 @@ class PostViewModel @Inject constructor(
     val photo: LiveData<PhotoModel?>
         get() = _photo
 
+    private val _media = MutableLiveData(noMedia)
+    val media: LiveData<MediaModel>
+        get() = _media
+
+
     private val edited = MutableLiveData(empty)
     private val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit>
         get() = _postCreated
-
-    /*init {
-        loadPosts()
-    }
 
     fun loadPosts() {
         viewModelScope.launch {
@@ -138,17 +103,6 @@ class PostViewModel @Inject constructor(
             }
         }
     }
-    fun loadPosts() {
-        viewModelScope.launch {
-            _state.value = FeedModelState(loading = true)
-            _state.value = try {
-                repository.getAll()
-                FeedModelState()
-            } catch (e: Exception) {
-                FeedModelState(error = true)
-            }
-        }
-    }*/
 
     fun setPhoto(uri: Uri, file: File) {
         _photo.value = PhotoModel(uri, file)
@@ -169,18 +123,6 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    /*fun refresh() {
-        viewModelScope.launch {
-            _state.value = FeedModelState(refreshing = true)
-            _state.value = try {
-                repository.getAll()
-                FeedModelState()
-            } catch (e: Exception) {
-                FeedModelState(error = true)
-            }
-        }
-    }*/
-
     fun likeById(post: Post) {
         viewModelScope.launch {
             try {
@@ -192,18 +134,6 @@ class PostViewModel @Inject constructor(
             }
         }
     }
-
-    /*fun dislikeById(post: Post) {
-        viewModelScope.launch {
-            try {
-                _state.value = FeedModelState(loading = true)
-                repository.unLikeById(post)
-                _state.value = FeedModelState()
-            } catch (e: Exception) {
-                _state.value = FeedModelState(error = true)
-            }
-        }
-    }*/
 
     fun edit(post: Post) {
         edited.value = post
@@ -223,43 +153,55 @@ class PostViewModel @Inject constructor(
     }
 
     fun save() {
-        edited.value?.let {post ->
             viewModelScope.launch {
+                val post = requireNotNull(edited.value)
                 try {
-                    photo.value?.file?.let {
-                        repository.saveWithAttachment(post, MediaUpload(it))
-                    } ?: repository.save(post)
-                    _postCreated.value = Unit
-                    edited.value = empty
+                    _dataState.value = FeedModelState(loading = true)
+                    when (_media.value) {
+                        noMedia -> {
+                            repository.save(post)
+                        }
+
+                        else -> {
+                            when (_media.value?.type) {
+                                AttachmentType.IMAGE -> {
+                                    _media.value?.file?.let { file ->
+                                        repository.saveWithAttachment(
+                                            post, MediaUpload(file), AttachmentType.IMAGE
+                                        )
+                                    }
+                                }
+
+                                AttachmentType.VIDEO -> {
+                                    _media.value?.file?.let { file ->
+                                        repository.saveWithAttachment(
+                                            post,
+                                            MediaUpload(file),
+                                            AttachmentType.VIDEO
+                                        )
+                                    }
+                                }
+
+                                AttachmentType.AUDIO -> {
+                                    _media.value?.file?.let { file ->
+                                        repository.saveWithAttachment(
+                                            post, MediaUpload(file), AttachmentType.AUDIO
+                                        )
+                                    }
+                                }
+
+                                null -> repository.save(post)
+                            }
+                        }
+                    }
                     _dataState.value = FeedModelState()
                 } catch (e: Exception) {
                     _dataState.value = FeedModelState(error = true)
+                } finally {
+                    clearPhoto()
                 }
             }
         }
-    }
-
-    /*fun save() {
-        edited.value?.let {
-            _postCreated.value = Unit
-            viewModelScope.launch {
-                try {
-                    when (_photo.value) {
-                        noPhoto -> repository.save(it)
-                        else -> _photo.value?.file?.let { file ->
-                            repository.saveWithAttachment(it, MediaUpload(file))
-                        }
-                    }
-                    _state.value = FeedModelState()
-                } catch (e: Exception) {
-                    _state.value = FeedModelState(error = true)
-                }
-            }
-        }
-        edited.value = empty
-        _photo.value = noPhoto
-    }*/
-
 
     fun changeContent(content: String) {
         edited.value?.let {
@@ -271,9 +213,7 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    /*fun abortText() {
-        edited.value?.let {
-            edited.value = empty
-        }
-    }*/
+    fun changeMedia (uri: Uri?, file: File?, type: AttachmentType?) {
+        _media.value = MediaModel(uri, file, type)
+    }
 }

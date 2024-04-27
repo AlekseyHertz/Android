@@ -52,19 +52,7 @@ class PostRepositoryImpl @Inject constructor(
         )
     ).flow.map {
         it.map(PostEntity::toDto)
-        // - ребилд по лекции - //
-//            .insertSeparators { previous, next ->
-//                if (previous?.id?.rem(5) == 0L) {
-//                    Ad(Random.nextLong(), "figma.jpg")
-//                } else {
-//                    null
-//                }
-//            }
-        // - ребилд по лекции - //
     }
-    /*dao.getAll()
-        .map(List<PostEntity>::toDto)
-        .flowOn(Dispatchers.Default)*/
 
     override fun getNewerCount(id: Long): Flow<Int> =
         flow {
@@ -85,21 +73,6 @@ class PostRepositoryImpl @Inject constructor(
             }
         }
 
-    /*override suspend fun getAll() {
-        try {
-            val response = apiService.getAll()
-            if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
-            }
-            val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.insert(body.toEntity())//map(PostEntity::fromDto))
-        } catch (e: IOException) {
-            throw NetworkError
-        } catch (e: Exception) {
-            throw UnknownError
-        }
-    }*/
-
     override suspend fun getById(id: Long) {
         val postResponse = apiService.getById(id)
 
@@ -113,7 +86,7 @@ class PostRepositoryImpl @Inject constructor(
                 throw ApiError(response.code(), response.message())
             }
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-                dao.insert(PostEntity.fromDto(body))
+            dao.insert(PostEntity.fromDto(body))
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
@@ -121,39 +94,16 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    /*override suspend fun save(post: Post, upload: MediaUpload?) {
+    override suspend fun saveWithAttachment(post: Post, media: MediaUpload, type: AttachmentType) {
         try {
-            val postWithAttachment = upload?.let {
-                upload(it)
-            }?.let {
-                // TODO: add support for other types
-                post.copy(attachment = Attachment(it.id, AttachmentType.IMAGE))
-            }
-            val response = apiService.save(postWithAttachment ?: post)
-            if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
-            }
-
-            val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.insert(PostEntity.fromDto(body))
+            val upload = upload(media)
+            val postWithAttach = post.copy(attachment = Attachment(upload.url, type))
+            save(postWithAttach)
+        } catch (e:ApiError) {
+            throw e
         } catch (e: IOException) {
             throw NetworkError
-        } catch (e: Exception) {
-            throw UnknownError
-        }
-    }*/
-
-    override suspend fun saveWithAttachment(post: Post, upload: MediaUpload) {
-        try {
-            val media = upload(upload)
-            val postWithAttachment =
-                post.copy(attachment = Attachment(media.id, AttachmentType.IMAGE))
-            save(postWithAttachment)
-        } catch (e: ApiError) {
-            throw e
-        } catch (e:IOException) {
-            throw NetworkError
-        } catch (e: Exception) {
+        } catch (e:Exception) {
             throw UnknownError
         }
     }

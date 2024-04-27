@@ -29,8 +29,8 @@ data class Ad(
 ) : FeedItem
 
 data class Attachment(
-    val url: String?,
-    val type: AttachmentType?
+    val url: String,
+    val type: AttachmentType
 )
 
 enum class AttachmentType {

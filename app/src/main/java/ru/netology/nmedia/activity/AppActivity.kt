@@ -38,9 +38,6 @@ class AppActivity : AppCompatActivity() {
     @Inject
     lateinit var googleApi: GoogleApiAvailability
 
-
-    //private val viewModel: AuthViewModel by viewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestNotificationPermission()
@@ -101,8 +98,6 @@ class AppActivity : AppCompatActivity() {
 
                             R.id.registration -> {
                                 findNavController(R.id.action_feedFragment_to_registrationFragment)
-                                //reg.tryRegistration("","","")
-                                //.navigate(R.id.action_feedFragment_to_registrationFragment)
                                 true
                             }
 

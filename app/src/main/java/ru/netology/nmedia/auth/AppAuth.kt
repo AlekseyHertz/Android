@@ -29,11 +29,15 @@ class AppAuth @Inject constructor(
     private val prefs = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
     private val idKey = "id"
     private val tokenKey = "token"
+    private val avatar = "avatar"
+    private val name = "name"
     val _authStateFlow: MutableStateFlow<AuthState>
 
     init {
         val token = prefs.getString(tokenKey, null)
         val id = prefs.getLong(idKey, 0)
+        val avatar = prefs.getString(avatar, null)
+        val name = prefs.getString(name, null)
 
         if (token == null || id == 0L) {
             _authStateFlow = MutableStateFlow(AuthState(id, token))
@@ -42,20 +46,20 @@ class AppAuth @Inject constructor(
                 apply()
             }
         } else {
-            _authStateFlow = MutableStateFlow(AuthState(id, token))
+            _authStateFlow = MutableStateFlow(AuthState(id, token,avatar, name))
         }
-
-        //sendPushToken()
     }
 
     val authStateFlow: StateFlow<AuthState> = _authStateFlow.asStateFlow()
 
     @Synchronized
     fun setAuth(id: Long, token: String) {
-        _authStateFlow.value = AuthState(id, token)
+        _authStateFlow.value = AuthState(id, token, avatar, name)
         with(prefs.edit()) {
             putLong(idKey, id)
             putString(tokenKey, token)
+            putString(avatar, avatar)
+            putString(name, name)
             apply()
         }
         sendPushToken()
@@ -101,5 +105,10 @@ class AppAuth @Inject constructor(
         return hiltEntryPoint.getPostApiService()
     }
 
-    data class AuthState(val id: Long = 0, val token: String? = null)
+    data class AuthState(
+        val id: Long = 0,
+        val token: String? = null,
+        val avatar: String? = null,
+        val name: String? = null
+    )
 }

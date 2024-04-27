@@ -17,7 +17,7 @@ import ru.netology.nmedia.vi.AuthViewModel
 import ru.netology.nmedia.viewmodel.RegistrationViewModel
 
 @AndroidEntryPoint
-class RegisterFragment : Fragment() {
+class RegistrationFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

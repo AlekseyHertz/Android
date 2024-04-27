@@ -56,9 +56,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/post"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            >
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/avatar"
@@ -114,7 +112,6 @@
                 app:layout_constraintTop_toTopOf="@+id/avatar"
                 tools:ignore="ImageContrastCheck,TouchTargetSizeCheck" />
 
-
             <ImageView
                 android:id="@+id/attachment"
                 android:layout_width="0dp"
@@ -124,8 +121,8 @@
                 android:clickable="true"
                 android:contentDescription="@string/attachment"
                 android:visibility="visible"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/avatar"
                 app:srcCompat="@mipmap/ic_video_play" />
 
@@ -197,7 +194,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/likers"
                 tools:ignore="SpeakableTextPresentCheck"
                 tools:itemCount="3"
-                tools:listitem="@layout/avatars"/>
+                tools:listitem="@layout/avatars" />
 
             <TextView
                 android:id="@+id/mentioned"
@@ -210,9 +207,7 @@
                 android:textColor="@color/textColor"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/like"
-
-                />
+                app:layout_constraintTop_toBottomOf="@+id/like" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/mention"

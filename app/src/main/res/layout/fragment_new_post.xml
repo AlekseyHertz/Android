@@ -6,6 +6,50 @@
     android:layout_height="match_parent"
     tools:context=".activity.NewPostActivity">
 
+    <LinearLayout
+        android:id="@+id/systemPanel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="start|end"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="MissingConstraints">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/backInPosts"
+            style="@style/Widget.AppTheme.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/description_take_photo"
+            android:padding="@dimen/common_spacing"
+            app:icon="@drawable/ic_back_24" />
+
+        <TextView
+            android:id="@+id/newPost"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="NEW POST" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/savePosts"
+            style="@style/Widget.AppTheme.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/description_take_photo"
+            android:padding="@dimen/common_spacing"
+            app:icon="@drawable/ic_check_24" />
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/postBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="systemPanel"
+        tools:ignore="NotSibling" />
+
+
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="0dp"
@@ -13,7 +57,7 @@
         app:layout_constraintBottom_toTopOf="@id/divider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="@id/postBarrier">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -68,26 +112,52 @@
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/gallery"
-            style="@style/Widget.AppTheme.IconButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/description_select_photo"
-            android:padding="@dimen/common_spacing"
-            app:icon="@drawable/ic_gallery_24" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:backgroundTint="@color/BackgroundForPanel">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/takePhoto"
             style="@style/Widget.AppTheme.IconButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:contentDescription="@string/description_select_photo"
+            android:padding="@dimen/common_spacing"
+            app:icon="@drawable/ic_photo_camera_80" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/gallery"
+            style="@style/Widget.AppTheme.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:contentDescription="@string/description_take_photo"
             android:padding="@dimen/common_spacing"
-            app:icon="@drawable/ic_add_photo_24" />
+            app:icon="@drawable/ic_attach_file_24" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/sharedPeople"
+            style="@style/Widget.AppTheme.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/description_take_photo"
+            android:padding="@dimen/common_spacing"
+            app:icon="@drawable/ic_people_24" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/addLocal"
+            style="@style/Widget.AppTheme.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/description_take_photo"
+            android:padding="@dimen/common_spacing"
+            app:icon="@drawable/ic_location_on_24" />
+
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressNewPost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

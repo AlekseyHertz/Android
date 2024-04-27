@@ -1,19 +1,4 @@
-package ru.netology.nmedia.repository.di
-
-import android.content.Context
-import androidx.room.Room
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
-import ru.netology.nmedia.BuildConfig
-import ru.netology.nmedia.api.PostsApiService
-import ru.netology.nmedia.auth.AppAuth
-import ru.netology.nmedia.db.AppDb
-import ru.netology.nmedia.repository.PostRepository
-import ru.netology.nmedia.repository.PostRepositoryImpl
-import java.util.concurrent.TimeUnit
+package ru.netology.nmedia.garbage
 
 // class DependencyContainer(
 // private val context: Context

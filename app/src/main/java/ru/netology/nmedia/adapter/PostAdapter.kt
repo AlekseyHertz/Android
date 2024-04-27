@@ -4,18 +4,24 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.PopupMenu
 import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
 import ru.netology.nmedia.R
 import ru.netology.nmedia.api.ApiModule.Companion.glideDownload
 import ru.netology.nmedia.databinding.CardAdBinding
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.Ad
-import ru.netology.nmedia.dto.AttachmentType
+import ru.netology.nmedia.dto.AttachmentType.AUDIO
+import ru.netology.nmedia.dto.AttachmentType.IMAGE
+import ru.netology.nmedia.dto.AttachmentType.VIDEO
 import ru.netology.nmedia.dto.FeedItem
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.dto.convertCount
@@ -24,15 +30,12 @@ import ru.netology.nmedia.util.AndroidUtil.load
 interface OnInteractionListener {
     fun onLike(post: Post) {}
     fun onShare(post: Post) {}
-    //fun onView(post: Post) {}
     fun onEdit(post: Post) {}
     fun onRemove(post: Post) {}
     fun save(post: Post) {}
-    fun abortText(post: Post) {}
     fun playVideo(post: Post) {}
     fun onPost(post: Post) {}
     fun onImage(post: Post) {}
-    fun onAd(ad: Ad) {}
 }
 
 class PostAdapter(
@@ -43,8 +46,9 @@ class PostAdapter(
         when (getItem(position)) {
             is Ad -> R.layout.card_ad
             is Post -> R.layout.card_post
-            //null -> error("unknown item type")
-            else -> {error("unknown item type")}
+            else -> {
+                error("unknown item type")
+            }
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
@@ -54,23 +58,21 @@ class PostAdapter(
                     CardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 PostViewHolder(binding, onInteractionListener)
             }
-
             R.layout.card_ad -> {
                 val binding =
                     CardAdBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 AdViewHolder(binding, onInteractionListener)
             }
-
             else -> error("unknown view type: $viewType")
         }
-
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (val item = getItem(position)) {
             is Ad -> (holder as? AdViewHolder)?.bind(item)
             is Post -> (holder as? PostViewHolder)?.bind(item)
-            //null -> error("unknown item type")
-            else -> {error("unknown item type")}
+            else -> {
+                error("unknown item type")
+            }
         }
     }
 }
@@ -94,6 +96,14 @@ class PostViewHolder(
     private val onInteractionListener: OnInteractionListener,
 ) : RecyclerView.ViewHolder(binding.root) {
 
+    val videoThumbnail = binding.videoImage
+    val videoContainer = binding.videoLayout
+    val videoProgressBar = binding.videoProgressbar
+    val videoPlayIcon: ImageView = binding.playButton
+    private val parentView = binding.root
+    var videoPreview: MediaItem? = null
+    var videoPlayer: ExoPlayer? = null
+
     fun bind(post: Post) {
         binding.apply {
             author.text = post.author
@@ -105,7 +115,6 @@ class PostViewHolder(
             }
 
             Glide.with(binding.avatar)
-                //.load("${glideDownload}authorAvatar/${post.authorAvatar}")
                 .load("${post.authorAvatar}")
                 .placeholder(R.drawable.ic_download_24)
                 .error(R.drawable.ic_error_24)
@@ -113,55 +122,73 @@ class PostViewHolder(
                 .circleCrop()
                 .into(binding.avatar)
 
-            Glide.with(binding.typeAttachment)
-                //.load("${glideDownload}attachment/${post.attachment?.url}")
-                .load("${post.attachment?.url}")
-                .placeholder(R.drawable.ic_download_24)
-                .error(R.drawable.ic_error_24)
-                .timeout(10_000)
-                .into(binding.typeAttachment)
-
             binding.typeAttachment.setOnClickListener {
                 Log.d("post", "typeAttachment")
                 onInteractionListener.onImage(post)
-                //findNavController().navigate(R.id.action_postfragment_to_photoActivity)
             }
 
-            if (post.attachment != null) {
+            if (post.attachment == null) {
                 attachmentAll.visibility = View.VISIBLE
             } else {
-                attachmentAll.visibility = View.GONE
+                when (post.attachment?.type) {
+                    IMAGE -> {
+                        attachmentAll.visibility - View.VISIBLE
+                        videoLayout.visibility = View.GONE
+                        videoPreview = null
+                        Glide.with(binding.typeAttachment)
+                            .load("${post.attachment?.url}")
+                            .placeholder(R.drawable.ic_download_24)
+                            .error(R.drawable.ic_error_24)
+                            .timeout(10_000)
+                            .into(binding.typeAttachment)
+                    }
+                    VIDEO -> {
+                        videoContainer.visibility = View.VISIBLE
+                        typeAttachment.visibility = View.GONE
+                        videoPreview = MediaItem.fromUri(post.attachment!!.url)
+                        Glide.with(parentView)
+                            .load("${post.attachment!!.url}")
+                            .into(videoThumbnail)
+                        videoPlayer?.addListener(object : Player.Listener {
+                            override fun onPlaybackStateChanged(playbackState: Int) {
+                                when (playbackState) {
+                                    Player.STATE_BUFFERING -> {
+                                        videoProgressBar?.visibility = View.VISIBLE
+                                    }
+                                    Player.STATE_READY -> {
+                                        videoProgressBar?.visibility = View.GONE
+                                    }
+                                }
+                            }
+                        })
+                    }
+                    AUDIO -> {
+                        videoLayout.visibility = View.VISIBLE
+                        typeAttachment.visibility - View.GONE
+                        videoPreview = MediaItem.fromUri(post.attachment!!.url)
+                    }
+                    else -> {
+                        attachmentAll.visibility = View.GONE
+                    }
+                }
             }
 
             like.text = convertCount(post.likes)
             share.text = convertCount(post.sharedCount)
-            //likeCount.text = convertCount(post.likes)
-            //shareCount.text = convertCount(post.sharedCount)
             viewsCount.text = convertCount(post.viewsCount)
             like.isChecked = post.likedByMe
-            /*like.setImageResource(
-            if (post.likedByMe) R.drawable.ic_liked_24 else R.drawable.ic_like_24
-        )*/
 
             like.setOnClickListener {
                 like.isCheckable = !like.isCheckable
                 Log.d("stuff", "like") // оставим для logcat
                 onInteractionListener.onLike(post)
-                //likeCallBack(post)
             }
 
             share.isChecked = post.shareByMe
             share.setOnClickListener {
                 Log.d("stuff", "share") // оставим для logcat
                 onInteractionListener.onShare(post)
-                //shareCallBack(post)
             }
-
-//            views.setOnClickListener {
-//                Log.d("stuff", "view") // оставим для logcat
-//                onInteractionListener.onView(post)
-//                //viewCallBack(post)
-//            }
 
             menu.isVisible = post.ownerByMe
 
@@ -202,7 +229,6 @@ class PostViewHolder(
         }
     }
 }
-
 
 class PostDiffCallback : DiffUtil.ItemCallback<FeedItem>() {
 

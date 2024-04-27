@@ -23,6 +23,10 @@ class FragmentAuth : Fragment() {
 
     @Inject
     lateinit var repository: PostRepositoryImpl
+
+    companion object {
+        const val LOGIN_SUCCESSFUL: String = "LOGIN SUCCESSFUL"
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -66,13 +70,6 @@ class FragmentAuth : Fragment() {
                 }
                 loginViewModel.signLogin(login = accountName, password = accountPassword)
 
-
-                /*loginViewModel.signLogin(username = accountName, password = accountPassword)
-                    authViewModel.data.observe(viewLifecycleOwner) {
-                        if (authViewModel.authorized) {
-                            findNavController().navigateUp()
-                        }
-                    }*/
             }
         }
 
