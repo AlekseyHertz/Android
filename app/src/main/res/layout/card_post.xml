@@ -54,7 +54,7 @@
         android:layout_marginBottom="@dimen/common_spacing"
         android:background="@android:color/transparent"
         android:contentDescription="@string/description_post_menu"
-        app:icon="@drawable/ic_more_vert_24"
+        app:icon="@drawable/ic_account_circle_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:checked="@sample/posts.json/data/likeByMe">
@@ -112,18 +112,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/content">
 
-        <ImageView
-            android:id="@+id/playButton"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:checkable="true"
-            android:contentDescription="@string/description_post_playButton"
-            android:gravity="center_horizontal|center_vertical"
-            app:icon="@drawable/ic_play_button_24"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
         <com.google.android.exoplayer2.ui.StyledPlayerControlView
             android:id="@+id/videoView"
             android:layout_width="match_parent"
@@ -132,11 +120,10 @@
 
         <ImageView
             android:id="@+id/videoImage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="TODO"
-            android:foregroundGravity="center"
-            android:src="@mipmap/ic_video_play_round" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="centerInside"
+            tools:ignore="ContentDescription" />
 
         <ProgressBar
             android:id="@+id/video_progressbar"
@@ -144,7 +131,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:visibility="gone"/>
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/playButton"
+            android:layout_width="82dp"
+            android:layout_height="82dp"
+            android:layout_gravity="center"
+            android:alpha="0.8"
+            android:scaleType="center"
+            android:src="@drawable/ic_play_circle_24" />
 
     </FrameLayout>
 

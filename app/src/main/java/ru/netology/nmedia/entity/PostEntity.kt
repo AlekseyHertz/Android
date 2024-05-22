@@ -20,7 +20,6 @@ data class PostEntity(
     val shareByMe: Boolean,
     val viewsCount: Int,
     val viewByMe: Boolean,
-    val videoUrl: String? = null,
     @Embedded
     var attachment: AttachmentEmbeddable?,
     val hidden: Boolean = false,
@@ -41,7 +40,6 @@ data class PostEntity(
         shareByMe = shareByMe,
         viewsCount = viewsCount,
         viewByMe = viewByMe,
-        videoUrl = videoUrl,
         attachment = attachment?.toDto(),
         hidden = hidden,
         ownerByMe = ownerByMe
@@ -61,7 +59,6 @@ data class PostEntity(
             dto.shareByMe,
             dto.viewsCount,
             dto.viewByMe,
-            dto.videoUrl,
             AttachmentEmbeddable.fromDto(dto.attachment),
             //dto.attachment,
             dto.hidden,

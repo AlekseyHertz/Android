@@ -58,11 +58,13 @@ class PostAdapter(
                     CardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 PostViewHolder(binding, onInteractionListener)
             }
+
             R.layout.card_ad -> {
                 val binding =
                     CardAdBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 AdViewHolder(binding, onInteractionListener)
             }
+
             else -> error("unknown view type: $viewType")
         }
 
@@ -102,7 +104,7 @@ class PostViewHolder(
     val videoPlayIcon: ImageView = binding.playButton
     private val parentView = binding.root
     var videoPreview: MediaItem? = null
-    var videoPlayer: ExoPlayer? = null
+    private var videoPlayer: ExoPlayer? = null
 
     fun bind(post: Post) {
         binding.apply {
@@ -128,7 +130,7 @@ class PostViewHolder(
             }
 
             if (post.attachment == null) {
-                attachmentAll.visibility = View.VISIBLE
+                attachmentAll.visibility = View.GONE
             } else {
                 when (post.attachment?.type) {
                     IMAGE -> {
@@ -142,6 +144,7 @@ class PostViewHolder(
                             .timeout(10_000)
                             .into(binding.typeAttachment)
                     }
+
                     VIDEO -> {
                         videoContainer.visibility = View.VISIBLE
                         typeAttachment.visibility = View.GONE
@@ -155,20 +158,37 @@ class PostViewHolder(
                                     Player.STATE_BUFFERING -> {
                                         videoProgressBar?.visibility = View.VISIBLE
                                     }
+
                                     Player.STATE_READY -> {
                                         videoProgressBar?.visibility = View.GONE
                                     }
                                 }
+                                videoPlayer?.let {
+                                    it.prepare()
+                                    it.playWhenReady = true
+                                }
                             }
                         })
+
+
+
+                        playButton.setOnClickListener {
+                            onInteractionListener.playVideo(post)
+                            Log.d("play", "play")
+                        }
                     }
+
                     AUDIO -> {
                         videoLayout.visibility = View.VISIBLE
                         typeAttachment.visibility - View.GONE
                         videoPreview = MediaItem.fromUri(post.attachment!!.url)
+                        videoPlayer?.let {
+                            it.playWhenReady = true
+                        }
                     }
+
                     else -> {
-                        attachmentAll.visibility = View.GONE
+                        //attachmentAll.visibility = View.GONE
                     }
                 }
             }
@@ -211,15 +231,6 @@ class PostViewHolder(
                         }
                     }
                 }.show()
-            }
-
-            if (!post.videoUrl.isNullOrBlank()) {
-                videoLayout.visibility = View.VISIBLE
-            } else {
-                videoLayout.visibility = View.GONE
-            }
-            playButton.setOnClickListener {
-                onInteractionListener.playVideo(post)
             }
 
             root.setOnClickListener {

@@ -126,9 +126,18 @@
 
     </style>
 
+    <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">@dimen/toolbar_text_size</item>
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:layout_marginVertical">@dimen/small_spacing</item>
+    </style>
+
     <style name="ShapeAppearanceOverlay.MyApp.Button.Circle" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
 
+    <dimen name="toolbar_text_size">32dp</dimen>
+    <dimen name="small_spacing">8dp</dimen>
+    <color name="primary_text">#212121</color>
 </resources>

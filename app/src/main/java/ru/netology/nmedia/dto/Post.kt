@@ -17,7 +17,6 @@ data class Post(
     val shareByMe: Boolean = false,
     val viewsCount: Int = 0,
     val viewByMe: Boolean = false,
-    val videoUrl: String? = null,
     var attachment: Attachment? = null,
     val hidden: Boolean = false,
     val ownerByMe: Boolean = false

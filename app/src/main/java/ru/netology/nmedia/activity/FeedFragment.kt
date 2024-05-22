@@ -39,7 +39,6 @@ class FeedFragment : Fragment() {
 
     @Inject
     lateinit var appAuth: AppAuth
-
     private val viewModel: PostViewModel by activityViewModels()
     val authViewModel: AuthViewModel by activityViewModels()
     private lateinit var navController: NavController
@@ -63,7 +62,7 @@ class FeedFragment : Fragment() {
                         Lifecycle.Event.ON_RESUME -> binding.list.createPlayer()
                         Lifecycle.Event.ON_PAUSE,
                         Lifecycle.Event.ON_STOP -> binding.list.releasePlayer()
-
+                        Lifecycle.Event.ON_START,
                         Lifecycle.Event.ON_DESTROY -> source.lifecycle.removeObserver(this)
                         else -> Unit
                     }

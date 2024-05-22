@@ -21,5 +21,7 @@
     <color name= "textColor">#1D1B20</color>
     <color name="grayBackground">#FEF7FF</color>
     <color name="BackgroundForPanel">#F3EDF7</color>
+    <color name="color_button_add">#D1C1EE</color>
+    <color name="color_button_bar">#FFFDFC</color>
 
 </resources>

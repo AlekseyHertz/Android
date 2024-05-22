@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">NMedia</string>
+    <string name="app_name">NeWork</string>
     <string name="hello">Hello World!</string>
     <string name="description_post_author_avatar">Post author avatar</string>
     <string name="description_post_menu">Post menu</string>
@@ -92,5 +92,6 @@
     <string name="event">Event</string>
     <string name="video_container">Video container</string>
     <string name="content_can_t_be_empty">Content can\'t be empty</string>
+    <string name="NeWork">NeWork\n</string>
 
 </resources>

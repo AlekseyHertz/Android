@@ -101,7 +101,7 @@ class MediaRecyclerView : RecyclerView {
         playIcon?.visibility = View.GONE
     }
 
-    private fun playVideo(view: View) {
+    fun playVideo(view: View) {
         if (viewHolderParent != null && viewHolderParent == view) {
             return
         } else {
