@@ -59,9 +59,7 @@ class FeedFragment : Fragment() {
             object : LifecycleEventObserver {
                 override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
                     when (event) {
-                        Lifecycle.Event.ON_RESUME -> binding.list.createPlayer()
                         Lifecycle.Event.ON_PAUSE,
-                        Lifecycle.Event.ON_STOP -> binding.list.releasePlayer()
                         Lifecycle.Event.ON_START,
                         Lifecycle.Event.ON_DESTROY -> source.lifecycle.removeObserver(this)
                         else -> Unit
@@ -92,7 +90,6 @@ class FeedFragment : Fragment() {
         val adapter = PostAdapter(object : OnInteractionListener {
             override fun onEdit(post: Post) {
                 viewModel.edit(post)
-                //newPostLauncher.launch(post.content)
                 findNavController().navigate(
                     R.id.action_feedFragment_to_newPostFragment,
                     bundleOf().apply {

@@ -54,32 +54,4 @@ interface PostDao {
 
     @Query("DELETE FROM PostEntity WHERE id = :id")
     suspend fun removeById(id: Long)
-
-    /*@Query(
-        """
-           UPDATE PostEntity SET
-              viewsCount = viewsCount +1
-              WHERE id = :id;
-           """
-    )
-    suspend fun viewById(id: Long)
-
-    @Query(
-        """
-            UPDATE PostEntity SET
-              sharedCount = sharedCount + CASE WHEN shareByMe THEN -1 ELSE 1 END,
-              shareByMe = CASE WHEN shareByMe THEN 0 ELSE 1 END
-              WHERE id = :id;
-        """
-    )
-    suspend fun sharedById(id: Long)*/
 }
-
-/*class Converters {
-    @TypeConverter
-    fun toAttachmentType(value: String) = enumValueOf<AttachmentType>(value)
-    @TypeConverter
-    fun fromAttachmentType(value: AttachmentType) = value.name
-}
-
- */

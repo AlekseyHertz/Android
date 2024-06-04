@@ -4,16 +4,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.PopupMenu
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
 import ru.netology.nmedia.R
 import ru.netology.nmedia.api.ApiModule.Companion.glideDownload
 import ru.netology.nmedia.databinding.CardAdBinding
@@ -101,10 +101,14 @@ class PostViewHolder(
     val videoThumbnail = binding.videoImage
     val videoContainer = binding.videoLayout
     val videoProgressBar = binding.videoProgressbar
-    val videoPlayIcon: ImageView = binding.playButton
     private val parentView = binding.root
-    var videoPreview: MediaItem? = null
-    private var videoPlayer: ExoPlayer? = null
+    private var videoPlayer: ExoPlayer = ExoPlayer.Builder(binding.root.context)
+        .build()
+        .also { exoPlayer ->
+            binding.videoView.player = exoPlayer
+            exoPlayer.playWhenReady = true
+            exoPlayer.prepare()
+        }
 
     fun bind(post: Post) {
         binding.apply {
@@ -130,13 +134,15 @@ class PostViewHolder(
             }
 
             if (post.attachment == null) {
-                attachmentAll.visibility = View.GONE
+                attachmentAll.isGone = true
+                videoLayout.isGone = true
+                videoPlayer.stop()
             } else {
                 when (post.attachment?.type) {
                     IMAGE -> {
                         attachmentAll.visibility - View.VISIBLE
                         videoLayout.visibility = View.GONE
-                        videoPreview = null
+                        videoPlayer.stop()
                         Glide.with(binding.typeAttachment)
                             .load("${post.attachment?.url}")
                             .placeholder(R.drawable.ic_download_24)
@@ -146,31 +152,28 @@ class PostViewHolder(
                     }
 
                     VIDEO -> {
-                        videoContainer.visibility = View.VISIBLE
-                        typeAttachment.visibility = View.GONE
-                        videoPreview = MediaItem.fromUri(post.attachment!!.url)
+                        videoContainer.isVisible = true
+                        typeAttachment.isVisible = true
+                        playButton.isGone = true
+                        videoPlayer.setMediaItems(listOf(MediaItem.fromUri(post.attachment!!.url)))
+                        videoPlayer.prepare()
                         Glide.with(parentView)
                             .load("${post.attachment!!.url}")
                             .into(videoThumbnail)
-                        videoPlayer?.addListener(object : Player.Listener {
+                        videoPlayer.addListener(object : Player.Listener {
                             override fun onPlaybackStateChanged(playbackState: Int) {
                                 when (playbackState) {
                                     Player.STATE_BUFFERING -> {
-                                        videoProgressBar?.visibility = View.VISIBLE
+                                        videoProgressBar.isGone = true
+                                        videoThumbnail.isGone = true
                                     }
 
                                     Player.STATE_READY -> {
-                                        videoProgressBar?.visibility = View.GONE
+                                        videoProgressBar.isGone = true
                                     }
-                                }
-                                videoPlayer?.let {
-                                    it.prepare()
-                                    it.playWhenReady = true
                                 }
                             }
                         })
-
-
 
                         playButton.setOnClickListener {
                             onInteractionListener.playVideo(post)
@@ -180,15 +183,11 @@ class PostViewHolder(
 
                     AUDIO -> {
                         videoLayout.visibility = View.VISIBLE
-                        typeAttachment.visibility - View.GONE
-                        videoPreview = MediaItem.fromUri(post.attachment!!.url)
-                        videoPlayer?.let {
-                            it.playWhenReady = true
-                        }
+                        videoPlayer.setMediaItems(listOf(MediaItem.fromUri(post.attachment!!.url)))
                     }
 
                     else -> {
-                        //attachmentAll.visibility = View.GONE
+                        videoPlayer.stop()
                     }
                 }
             }

@@ -67,7 +67,7 @@
             app:layout_constraintBaseline_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ru.netology.nmedia.adapter.MediaRecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

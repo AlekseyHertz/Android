@@ -39,8 +39,6 @@ class NewPostFragment : Fragment() {
 
     private val viewModel: PostViewModel by viewModels()
 
-    private var fragmentBinding: FragmentNewPostBinding? = null
-
     private val photoLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode != Activity.RESULT_OK) {
